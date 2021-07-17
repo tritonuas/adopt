@@ -1,7 +1,7 @@
 '''
-OpenMDAO script for design optimization of air taxi for MAE155B
+OpenMDAO script for design optimization of UAVs for Triton UAS
 
-Authors: LiFT (Team 9)
+Authors: Andrew Fletcher, Wilson Li
 Date: 4/21/2021
 '''
 
@@ -293,8 +293,8 @@ prob.driver.opt_settings['Major optimality tolerance'] =2.e-12
 ''' Setup and Run Optimization '''
 prob.setup()    # Organizes and arranges the systems/models for optimization
 
-prob.run_model()  # Runs a single iteration
-# prob.run_driver()   # Runs optimization
+# prob.run_model()  # Runs a single iteration
+prob.run_driver()   # Runs optimization
 
 ''' Post-optimization Optimizations'''
 
@@ -404,87 +404,87 @@ print('wing_cl_dist', wing_cl_dist)
 
 om.n2(prob)
 
-from csv import reader
-import matplotlib.pyplot as plt
-import seaborn as sns
+# from csv import reader
+# import matplotlib.pyplot as plt
+# import seaborn as sns
 
-sns.set()
-sns.set_style('darkgrid')
+# sns.set()
+# sns.set_style('darkgrid')
 
-# Load a CSV File
-def load_csv(filename):
-    dataset = list()
-    with open(filename, 'r') as file:
-        csv_reader = reader(file)
-        for row in csv_reader:
-            if not row: continue
-            dataset.append(row)
-    return dataset
+# # Load a CSV File
+# def load_csv(filename):
+#     dataset = list()
+#     with open(filename, 'r') as file:
+#         csv_reader = reader(file)
+#         for row in csv_reader:
+#             if not row: continue
+#             dataset.append(row)
+#     return dataset
 
-def interpolate(x1, x2, y1, y2, x):
-    return (y2 - y1) / (x2 - x1) * (x - x1) + y1
+# def interpolate(x1, x2, y1, y2, x):
+#     return (y2 - y1) / (x2 - x1) * (x - x1) + y1
 
-data = load_csv('naca4412.csv')
-alpha_4412 = [float(data[ind][0].strip()) for ind in range(1, len(data))]
-C_l_4412 = [float(data[ind][1].strip()) for ind in range(1, len(data))]
-C_d_4412 = [float(data[ind][2].strip()) for ind in range(1, len(data))]
+# data = load_csv('naca4412.csv')
+# alpha_4412 = [float(data[ind][0].strip()) for ind in range(1, len(data))]
+# C_l_4412 = [float(data[ind][1].strip()) for ind in range(1, len(data))]
+# C_d_4412 = [float(data[ind][2].strip()) for ind in range(1, len(data))]
 
-data = load_csv('naca0012.csv')
-alpha_0012 = [float(data[ind][0].strip()) for ind in range(1, len(data))]
-C_l_0012 = [float(data[ind][1].strip()) for ind in range(1, len(data))]
-C_d_0012 = [float(data[ind][2].strip()) for ind in range(1, len(data))]
+# data = load_csv('naca0012.csv')
+# alpha_0012 = [float(data[ind][0].strip()) for ind in range(1, len(data))]
+# C_l_0012 = [float(data[ind][1].strip()) for ind in range(1, len(data))]
+# C_d_0012 = [float(data[ind][2].strip()) for ind in range(1, len(data))]
 
-location = wing_cl_dist[:,0]
-C_l_req = wing_cl_dist[:,1]
+# location = wing_cl_dist[:,0]
+# C_l_req = wing_cl_dist[:,1]
 
-def get_outputs(C_l_airfoil, alpha, C_d_airfoil, C_l_req):
-    twist = []
-    Cds = []
-    for C_l in C_l_req:
-        ind = sorted(C_l_airfoil + [C_l]).index(C_l)
-        twist.append(interpolate(C_l_airfoil[ind-1], C_l_airfoil[ind], \
-                alpha[ind-1], alpha[ind], C_l))
-        Cds.append(interpolate(C_l_airfoil[ind-1], C_l_airfoil[ind], \
-                C_d_airfoil[ind-1], C_d_airfoil[ind], C_l))
-    return twist, Cds
+# def get_outputs(C_l_airfoil, alpha, C_d_airfoil, C_l_req):
+#     twist = []
+#     Cds = []
+#     for C_l in C_l_req:
+#         ind = sorted(C_l_airfoil + [C_l]).index(C_l)
+#         twist.append(interpolate(C_l_airfoil[ind-1], C_l_airfoil[ind], \
+#                 alpha[ind-1], alpha[ind], C_l))
+#         Cds.append(interpolate(C_l_airfoil[ind-1], C_l_airfoil[ind], \
+#                 C_d_airfoil[ind-1], C_d_airfoil[ind], C_l))
+#     return twist, Cds
 
-twist_4412, Cds_4412 = get_outputs(C_l_4412, alpha_4412, C_d_4412, C_l_req)
-twist_0012, Cds_0012 = get_outputs(C_l_0012, alpha_0012, C_d_0012, C_l_req)
+# twist_4412, Cds_4412 = get_outputs(C_l_4412, alpha_4412, C_d_4412, C_l_req)
+# twist_0012, Cds_0012 = get_outputs(C_l_0012, alpha_0012, C_d_0012, C_l_req)
 
-cutoff = 36
+# cutoff = 36
 
-plt.subplots(1,2,figsize=(12,8))
-plt.subplot(1,2,1)
-plt.plot(location, twist_4412, marker='o',color='maroon', label='NACA 4412')
-plt.xlabel('Span Location [m]', fontsize=19)
-plt.ylabel(r'Twist Angle [$^{\circ}$]',fontsize=19)
-plt.legend(fontsize=19)
-plt.subplot(1,2,2)
-plt.plot(location, [x/y for (x,y) in zip(C_l_req,Cds_4412)], marker='o',color='maroon', label='NACA 4412')
-plt.xlabel('Span Location [m]', fontsize=19)
-plt.ylabel(r'$C_l/C_d$', fontsize=19)
-plt.tight_layout(rect = [0,0.05,1,0.99])
-plt.legend(fontsize=19)
+# plt.subplots(1,2,figsize=(12,8))
+# plt.subplot(1,2,1)
+# plt.plot(location, twist_4412, marker='o',color='maroon', label='NACA 4412')
+# plt.xlabel('Span Location [m]', fontsize=19)
+# plt.ylabel(r'Twist Angle [$^{\circ}$]',fontsize=19)
+# plt.legend(fontsize=19)
+# plt.subplot(1,2,2)
+# plt.plot(location, [x/y for (x,y) in zip(C_l_req,Cds_4412)], marker='o',color='maroon', label='NACA 4412')
+# plt.xlabel('Span Location [m]', fontsize=19)
+# plt.ylabel(r'$C_l/C_d$', fontsize=19)
+# plt.tight_layout(rect = [0,0.05,1,0.99])
+# plt.legend(fontsize=19)
 
-plt.subplots(1,2,figsize=(12,8))
-plt.subplot(1,2,1)
-plt.plot(location[:cutoff], twist_4412[:cutoff], marker='o',color='maroon', label='NACA 4412')
-plt.plot(location[cutoff:], twist_0012[cutoff:], marker='o',color='darkcyan', label='NACA 0012')
-plt.xlabel('Span Location [m]', fontsize=19)
-plt.ylabel(r'Twist Angle [$^{\circ}$]',fontsize=19)
-plt.legend(fontsize=19)
-plt.subplot(1,2,2)
-plt.plot(location[:cutoff], [x/y for (x,y) in zip(C_l_req,Cds_4412[:cutoff])], marker='o',color='maroon', label='NACA 4412')
-plt.plot(location[cutoff:], [x/y for (x,y) in zip(C_l_req,Cds_4412[cutoff:])], marker='o',color='darkcyan', label='NACA 0012')
-plt.xlabel('Span Location [m]', fontsize=19)
-plt.ylabel(r'$C_l/C_d$', fontsize=19)
-plt.tight_layout(rect = [0,0.05,1,0.99])
-plt.legend(fontsize=19)
+# plt.subplots(1,2,figsize=(12,8))
+# plt.subplot(1,2,1)
+# plt.plot(location[:cutoff], twist_4412[:cutoff], marker='o',color='maroon', label='NACA 4412')
+# plt.plot(location[cutoff:], twist_0012[cutoff:], marker='o',color='darkcyan', label='NACA 0012')
+# plt.xlabel('Span Location [m]', fontsize=19)
+# plt.ylabel(r'Twist Angle [$^{\circ}$]',fontsize=19)
+# plt.legend(fontsize=19)
+# plt.subplot(1,2,2)
+# plt.plot(location[:cutoff], [x/y for (x,y) in zip(C_l_req,Cds_4412[:cutoff])], marker='o',color='maroon', label='NACA 4412')
+# plt.plot(location[cutoff:], [x/y for (x,y) in zip(C_l_req,Cds_4412[cutoff:])], marker='o',color='darkcyan', label='NACA 0012')
+# plt.xlabel('Span Location [m]', fontsize=19)
+# plt.ylabel(r'$C_l/C_d$', fontsize=19)
+# plt.tight_layout(rect = [0,0.05,1,0.99])
+# plt.legend(fontsize=19)
 
-plt.figure()
-plt.plot(location, C_l_req, marker='o',color='maroon')
-plt.xlabel('Span Location [m]', fontsize=19)
-plt.ylabel(r'$C_l$', fontsize=19)
-plt.tight_layout(rect = [0,0.05,1,0.99])
+# plt.figure()
+# plt.plot(location, C_l_req, marker='o',color='maroon')
+# plt.xlabel('Span Location [m]', fontsize=19)
+# plt.ylabel(r'$C_l$', fontsize=19)
+# plt.tight_layout(rect = [0,0.05,1,0.99])
 
-plt.show()
+# plt.show()
