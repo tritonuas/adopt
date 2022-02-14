@@ -98,9 +98,6 @@ class ParasiteDragApprox(ot.Group):
 
     sweep_angle = self.declare_input('sweep_angle', val=0.)
 
-    rotor_CD0 = 0.01   # this approximation comes from a paper
-    # The paper provides a model that should be implemented instead: https://www.sciencedirect.com/science/article/pii/S2215098619316489
-
     M = velocity_cruise/a
 
     cf_wing = calc_cf(air_density, air_viscosity, wing_mac, velocity_cruise, a)
@@ -147,8 +144,7 @@ class ParasiteDragApprox(ot.Group):
 
     cD0 = Q*(cf_wing*FFWing*areaRatioWing + cf_fuse*FFFuse*areaRatioFuse + \
         cf_nose*FFNose*areaRatioNose + cf_htail*FFHTail*areaRatioHTail + \
-        cf_vtail*FFVTail*areaRatioVTail + cf_tail_boom*FFTailBoom*areaRatioTailBoom) \
-            + rotor_CD0
+        cf_vtail*FFVTail*areaRatioVTail + cf_tail_boom*FFTailBoom*areaRatioTailBoom)
 
     wing_term = cf_wing*FFWing*areaRatioWing
     htail_term = cf_htail*FFHTail*areaRatioHTail

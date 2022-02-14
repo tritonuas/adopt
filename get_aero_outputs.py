@@ -22,10 +22,10 @@ class GetAeroOutputs(ot.Group):
     cD0 = self.declare_input('cD0', val=0.02)
     e = self.declare_input('oswald_eff_factor', val=0.8)
     wing_ar = self.declare_input('wing_ar', val=11.)
-    veloicty_cruise = self.declare_input('veloicty_cruise', val=50.)
+    velocity_cruise = self.declare_input('velocity_cruise', val=50.)
     eta = self.declare_input('total_propulsive_efficiency', val=0.9685)
     n = self.declare_input('ultimate_load_factor', val=3.)
-    n = 3.
+    # n = 3.
     cDi = k*cL**2
     cD = cD0 + cDi
     l_over_d = cL/cD
@@ -33,13 +33,14 @@ class GetAeroOutputs(ot.Group):
     cL_max = (cL+1.25)*0.9*ot.cos(sweep_angle)
     velocity_stall = (2*lift/(air_density*wing_area*cL_max))**(1/2)
     thrust_per_weight_req_climb = climb_gradient + 2*(cD0/(np.pi*e*wing_ar))**(1/2)
-    power_per_weight_req_climb = thrust_per_weight_req_climb*veloicty_cruise/eta
+    power_per_weight_req_climb = thrust_per_weight_req_climb*velocity_cruise/eta
     thrust_req_climb = thrust_per_weight_req_climb*lift
     thrust_per_weight_req_maneuver = 2*n*(cD0/(np.pi*e*wing_ar))**(1/2)
-    power_per_weight_req_maneuver = thrust_per_weight_req_maneuver*veloicty_cruise/eta
+    power_per_weight_req_maneuver = thrust_per_weight_req_maneuver*velocity_cruise/eta
     thrust_req_maneuver = thrust_per_weight_req_maneuver*lift
 
     wing_loading = lift/wing_area
+    turning_radius = velocity_cruise**2/(9.81*(cL_max/cL**2-1)**(1/2))
 
     self.register_output('cDi', cDi)
     self.register_output('cD', cD)
@@ -53,5 +54,6 @@ class GetAeroOutputs(ot.Group):
     self.register_output('power_per_weight_req_maneuver', power_per_weight_req_maneuver)
     self.register_output('thrust_req_climb', thrust_req_climb)
     self.register_output('thrust_req_maneuver', thrust_req_maneuver)
+    self.register_output('turning_radius', turning_radius)
 
     

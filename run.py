@@ -36,48 +36,55 @@ air_viscosity = 1.789e-5  # sea level air viscosity
 a = 343     # m/s   speed of sound
 
 # technology constraint inputs
-battery_energy_density = 80/0.45*3600   # W-s/kg=J/kg 
-empty_weight = 1000*g      # N
+battery_energy_density = (5200*14.8/1000*3600)/0.4365   # W-s/kg=J/kg
+tail_boom_weight = 164.6/1000*g # N
+hs_weight = 261.3/1000*g # N
+vs_weight = 167.4/1000*g # N
+wing_weight = (1410.2+1444.4)/1000*g # N
+fuse_weight = 980/1000*g # N
+misc_weight = 200/1000*g # N
+landing_gear_weight = 850/1000*g # N
+empty_weight = tail_boom_weight+hs_weight+vs_weight+wing_weight+fuse_weight+misc_weight+landing_gear_weight  # N
 
 # mission inputs
-payload_weight = 500*g    # N
-battery_weight_cruise = 740*g    # N
-battery_weight_vtol = 60*g     # N
-vtol_motor_weight = 10 * 25 * g     # N
-cruise_motor_weight = 71 * g        # N
-total_propulsive_efficiency = 0.9685
+payload_weight = (7.3-0.510)*g    # N
+battery_weight_cruise = 436.5*4/1000*g    # N
+# battery_weight_vtol = 60*g     # N
+# vtol_motor_weight = 10 * 25 * g     # N
+cruise_motor_weight = 510/1000*g      # N
+total_propulsive_efficiency = 0.9
 
 # Initial Guesses for Design Variables
 # wing variables
-wing_mac = 1          # m
-wingspan = 11      # m
+wing_mac = 0.5       # m
+wingspan = 3.65      # m
 wing_taper_ratio = 0.45
 sweep_angle = 0
 dihedral = 0
-wing_t = 0.12
+wing_t = 0.06
 
 # tail variables
-htail_span = 3.
-htail_mac = 1.5
+htail_span = 0.5
+htail_mac = 0.25
 htail_sweep = 0
 htail_taper = 0.45
-htail_t = 0.18
+htail_t = 0.03
 
-vtail_span = 2.
-vtail_mac = 1.
+vtail_span = 0.25
+vtail_mac = 0.25
 vtail_sweep = 0
 vtail_taper = 0.45
-vtail_t = 0.12
+vtail_t = 0.03
 
 # tail boom variables
-tail_boom_length = 4
-tail_boom_radius = 0.2
+tail_boom_length = 1
+tail_boom_radius = 0.0381
 
 # Centers of gravity (% fuselage length)
-wing_cg = 0.45
-htail_cg = 0.9
-vtail_cg = 0.9
-batt_cg = 0.12
+wing_cg = 0.3
+htail_cg = 0.95
+vtail_cg = 0.95
+batt_cg = 0.1
 tailb_cg = 0.8
 
 # twist distribution? Don't have any spanwise analysis
@@ -86,22 +93,22 @@ tailb_cg = 0.8
 
 # Variables For Constraints
 # operating constraints
-max_velocity_stall = 35.     # m/s
-min_climb_gradient = .12   # m/m
-min_climb_speed = 6  # m/s
+max_velocity_stall = 15.     # m/s
+min_climb_gradient = 0.1     # m/m
+min_climb_speed = 1          # m/s
 # cl_max = 1.77
 ultimate_load_factor = 4.
 
 # geometric constraints
-max_wingspan = 11   # m
-fuse_width = 1.5      # m
-fuse_height = 2.     # m
-fuse_length = 10.     # m
+max_wingspan = 3.65    # m
+fuse_width = 0.21      # m
+fuse_height = 0.25     # m
+fuse_length = 1.1      # m
 
 # commented out because we shouldn't need to worry
-min_velocity_cruise = 50   #m/s
+min_velocity_cruise = 15   #m/s
 
-wing_battery_ratio = 0.5
+wing_battery_ratio = 0.
 
 indep_comp = om.IndepVarComp()
 
@@ -115,8 +122,9 @@ indep_comp.add_output('battery_energy_density', battery_energy_density)
 
 indep_comp.add_output('payload_weight', payload_weight)
 indep_comp.add_output('battery_weight_cruise', battery_weight_cruise)
-indep_comp.add_output('battery_weight_vtol', battery_weight_vtol)
-indep_comp.add_output('vtol_motor_weight', vtol_motor_weight)
+indep_comp.add_output('wing_weight', wing_weight)
+# indep_comp.add_output('battery_weight_vtol', battery_weight_vtol)
+# indep_comp.add_output('vtol_motor_weight', vtol_motor_weight)
 indep_comp.add_output('cruise_motor_weight', cruise_motor_weight)
 indep_comp.add_output('total_propulsive_efficiency', total_propulsive_efficiency)
 
@@ -216,7 +224,7 @@ prob.model.add_design_var('htail_mac')
 prob.model.add_design_var('vtail_span')
 prob.model.add_design_var('vtail_mac')
 prob.model.add_design_var('fuse_length')
-prob.model.add_design_var('battery_weight_cruise')
+# prob.model.add_design_var('battery_weight_cruise')
 # prob.model.add_design_var('wing_battery_weight_ratio')
 prob.model.add_design_var('wing_cg')
 # prob.model.add_design_var('htail_cg')
@@ -227,33 +235,34 @@ prob.model.add_design_var('tail_boom_length')
 # prob.model.add_design_var('tail_boom_radius')
 
 # # Add the objective to the problem
-prob.model.add_objective('range', scaler=-1)
+# prob.model.add_objective('range', scaler=-1)
+prob.model.add_objective('turning_radius')
 
 # # Add the constraints to the problem
 # prob.model.add_constraint('wingspan', upper=max_wingspan, lower=0.1)
-prob.model.add_constraint('wing_mac', lower=0.1, upper=10.)
-prob.model.add_constraint('htail_span', lower=2.5, upper=8.)
-prob.model.add_constraint('htail_mac', lower=0.05, upper=4.)
+prob.model.add_constraint('wing_mac', lower=0.25, upper=2.)
+prob.model.add_constraint('htail_span', lower=0.25, upper=1.)
+prob.model.add_constraint('htail_mac', lower=0.05, upper=0.5)
 prob.model.add_constraint('htail_ar', lower=2.5, upper=5.)
-prob.model.add_constraint('vtail_span', lower=0.05, upper=6.)
-prob.model.add_constraint('vtail_mac', lower=0.05, upper=3.)
+prob.model.add_constraint('vtail_span', lower=0.05, upper=1.)
+prob.model.add_constraint('vtail_mac', lower=0.05, upper=0.5)
 prob.model.add_constraint('vtail_ar', lower=1., upper=3.)
-prob.model.add_constraint('fuse_length', lower=4., upper=10.)
-prob.model.add_constraint('tail_boom_length', lower=0.001, upper=6.)
+prob.model.add_constraint('fuse_length', lower=1.1, upper=2.)
+prob.model.add_constraint('tail_boom_length', lower=0.001, upper=1.)
 # prob.model.add_constraint('tail_boom_radius', lower=1e-4, upper=1.)
-# prob.model.add_constraint('velocity_cruise', lower=min_velocity_cruise)
+prob.model.add_constraint('velocity_cruise', lower=min_velocity_cruise)
 prob.model.add_constraint('velocity_stall', upper=max_velocity_stall)
 
 prob.model.add_constraint('cL', upper=1.25)
 
 # Weights constraints
-prob.model.add_constraint('battery_weight_cruise', lower=0., upper=740*g)
+# prob.model.add_constraint('battery_weight_cruise', lower=0., upper=740*g)
 # prob.model.add_constraint('wing_battery_weight_ratio', lower=0.01, upper=0.99)
-prob.model.add_constraint('wing_cg', lower=0.3, upper=0.6)
+prob.model.add_constraint('wing_cg', lower=0.25, upper=0.6)
 # prob.model.add_constraint('htail_cg', lower=0.8, upper=0.95)
-prob.model.add_constraint('vtail_cg', lower=0.5, upper=0.9)
-prob.model.add_constraint('batt_cg', lower=0.08, upper=0.9)
-prob.model.add_constraint('dist_between_htail_and_fuse', lower=1.5)
+prob.model.add_constraint('vtail_cg', lower=0.5, upper=0.95)
+prob.model.add_constraint('batt_cg', lower=0.08, upper=0.95)
+# prob.model.add_constraint('dist_between_htail_and_fuse', lower=1.5)
 
 # Static stability constraints
 prob.model.add_constraint('SM', lower=0.1, upper=0.2)
@@ -270,12 +279,12 @@ prob.model.add_constraint('C_ybeta', upper=0)
 prob.model.add_constraint('C_nr', upper=0)
 
 # # Dynamic stability constraints
-prob.model.add_constraint('w_sp', lower=4, upper=16.)
-prob.model.add_constraint('z_sp', lower=0.16, upper=1.0)
-prob.model.add_constraint('w_dr', lower=1)
-prob.model.add_constraint('z_dr', lower=0.04)
-prob.model.add_constraint('wd_dr', lower=0.1225)
-prob.model.add_constraint('t_roll', upper=2.0)
+# prob.model.add_constraint('w_sp', lower=4, upper=16.)
+# prob.model.add_constraint('z_sp', lower=0.16, upper=1.0)
+# prob.model.add_constraint('w_dr', lower=1)
+# prob.model.add_constraint('z_dr', lower=0.04)
+# prob.model.add_constraint('wd_dr', lower=0.1225)
+# prob.model.add_constraint('t_roll', upper=2.0)
 
 ''' Adding Optimizer to the Problem '''
 prob.driver = om.ScipyOptimizeDriver()
@@ -331,6 +340,7 @@ print('L/D: ', prob['l_over_d'])
 print('lift: ', prob['lift'])
 print('wing_mac: ', prob['wing_mac'])
 print('range: ', prob['range'])
+print('turning_radius: ', prob['turning_radius'])
 
 print('ar: ', prob['ar'])
 print('wing_loading', prob['wing_loading'])
@@ -341,7 +351,7 @@ print('thrust required climb: ', prob['thrust_req_climb'])
 print('P/W required maneuver: ', prob['power_per_weight_req_maneuver'])
 print('thrust required maneuver: ', prob['thrust_req_maneuver'])
 
-print("Wing battery ratio: ", prob['wing_battery_weight_ratio'])
+# print("Wing battery ratio: ", prob['wing_battery_weight_ratio'])
 
 print()
 print('Horizaontal and vertical tail sizing')
@@ -363,7 +373,7 @@ print('htail_weight:', prob['htail_weight']/g, 'kg')
 print('vtail_weight:', prob['vtail_weight']/g, 'kg')
 print('fuse_weight:', prob['fuse_weight']/g, 'kg')
 print('tail_boom_weight:', prob['tail_boom_weight']/g, 'kg')
-print('motor_weight:', prob['motor_weight']/g, 'kg')
+# print('motor_weight:', prob['motor_weight']/g, 'kg')
 print('misc_weight:', prob['misc_weight']/g, 'kg')
 
 print()

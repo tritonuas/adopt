@@ -17,9 +17,9 @@ class CalcDynStab(ot.Group):
         C_lq = 0.01    # This is a guess. I have no equation
         C_yr = 0.25     # Also a guess lol
 
-        gross = self.declare_input('gross_weight', val=1400*g)
-        wingspan = self.declare_input('wingpsan')
-        fuse_len = self.declare_input('fuse_length', val = 7)
+        gross = self.declare_input('gross_weight', val=12*g)
+        wingspan = self.declare_input('wingspan')
+        fuse_len = self.declare_input('fuse_length', val = 1.1)
 
         Ixx = (wingspan*unit.mti_len)**2 * (gross*unit.mti_weight) * Rx**2 / \
                 unit.g / 4 / unit.mti_inertia
@@ -28,11 +28,11 @@ class CalcDynStab(ot.Group):
         Izz = ((fuse_len+wingspan)/2*unit.mti_len)**2 * (gross*unit.mti_weight) * \
                 Rz**2 / unit.g / 4 / unit.mti_inertia
 
-        V_0 = self.declare_input('velocity_cruise', val=50.)
+        V_0 = self.declare_input('velocity_cruise', val=20.)
         air_density = self.declare_input('air_density', val=1.225)
         q = 1/2*air_density*V_0**2
 
-        S_wing = self.declare_input('wing_area', val=11.)
+        S_wing = self.declare_input('wing_area', val=1.)
         W_mac = self.declare_input('W_mac')
         wingspan = self.declare_input('wingpsan')
 

@@ -9,11 +9,11 @@ class CalcStatStab(ot.Group):
     def setup(self):
         payload_weight = self.declare_input('payload_weight', val=400*9.81)
         battery_weight = self.declare_input('battery_weight_cruise', val=300*9.81)
-        battery_weight_vtol = self.declare_input('battery_weight_vtol', val=500*9.81)
-        vtol_motor_weight = self.declare_input('vtol_motor_weight', val=25*10*9.81)
+        # battery_weight_vtol = self.declare_input('battery_weight_vtol', val=500*9.81)
+        # vtol_motor_weight = self.declare_input('vtol_motor_weight', val=25*10*9.81)
         cruise_motor_weight = self.declare_input('cruise_motor_weight', val=71*9.81)
 
-        W_bwing = self.declare_input('wing_battery_weight_ratio', val = 0.25)
+        W_bwing = self.declare_input('wing_battery_weight_ratio', val = 0.)
         W_wing = self.declare_input('wing_weight')
         W_htail = self.declare_input('htail_weight')
         W_vtail = self.declare_input('vtail_weight')
@@ -37,12 +37,12 @@ class CalcStatStab(ot.Group):
 
         tail_boom_cg = wing_cg + 0.5 * tail_boom_length
 
-        w1 = W_wing + (battery_weight + battery_weight_vtol) * W_bwing + 8 / 10 * vtol_motor_weight
-        w2 = W_htail + 2 / 10 * vtol_motor_weight
+        w1 = W_wing + battery_weight
+        w2 = W_htail
         w3 = W_vtail
         w4 = W_fuse + payload_weight
         w5 = cruise_motor_weight
-        w6 = (1 - W_bwing) * (battery_weight + battery_weight_vtol) + misc_weight
+        w6 = (1 - W_bwing) * battery_weight + misc_weight
         w7 = W_tailb
         wx = w1*wing_cg + w2*htail_cg + w3*vtail_cg + w4*fuse_cg + \
                 w5*back_prop_cg + w6*batt_cg + w7*tail_boom_cg
@@ -50,8 +50,8 @@ class CalcStatStab(ot.Group):
 
         W_ar = self.declare_input('ar')
         W_mac = self.declare_input('wing_mac')
-        S_wing = self.declare_input('wing_area', val=11.)
-        wingspan = self.declare_input('wingpsan')
+        S_wing = self.declare_input('wing_area', val=1.)
+        wingspan = self.declare_input('wingspan')
         wing_sweep = self.declare_input('sweep_angle', val=0)
         wing_taper = self.declare_input('wing_taper_ratio')
         htail_ar = self.declare_input('htail_ar')

@@ -11,8 +11,9 @@ class CalcGrossWeight(ot.Group):
   def setup(self):
     payload_weight = self.declare_input('payload_weight', val=500*9.81)
     battery_weight_cruise = self.declare_input('battery_weight_cruise', val=700*9.81)
-    battery_weight_vtol = self.declare_input('battery_weight_vtol', val=100*9.81)
-    vtol_motor_weight = self.declare_input('vtol_motor_weight', val=10*25*9.81)
+    W_wing = self.declare_input('wing_weight', val=2850*9.81)
+#     battery_weight_vtol = self.declare_input('battery_weight_vtol', val=100*9.81)
+#     vtol_motor_weight = self.declare_input('vtol_motor_weight', val=10*25*9.81)
     cruise_motor_weight = self.declare_input('cruise_motor_weight', val=71*9.81)
 
     gross_weight = self.declare_input('gross_weight', val=1400*9.81)
@@ -56,10 +57,12 @@ class CalcGrossWeight(ot.Group):
 
     tail_len = (htail_cg - wing_cg) * fus_len
 
-    W_wing = 0.036 * (S_wing*unit.mti_area)**0.758 * (W_bwing*battery_weight_cruise*unit.mti_weight)**0.0035 * \
-            (W_ar/ot.cos(W_sweep)**2)**0.6 * (q*unit.mti_press)**0.006 * \
-            wing_taper**0.04 * (100*wing_t_over_c/ot.cos(W_sweep))**(-0.3) * \
-            (load_fact_ult*gross_weight*unit.mti_weight)**0.49 * 1/unit.mti_weight * fudge
+#     W_wing = 0.036 * (S_wing*unit.mti_area)**0.758 * (W_bwing*battery_weight_cruise*unit.mti_weight)**0.0035 * \
+#             (W_ar/ot.cos(W_sweep)**2)**0.6 * (q*unit.mti_press)**0.006 * \
+#             wing_taper**0.04 * (100*wing_t_over_c/ot.cos(W_sweep))**(-0.3) * \
+#             (load_fact_ult*gross_weight*unit.mti_weight)**0.49 * 1/unit.mti_weight * fudge
+
+#     W_wing = (1410.2 + 1444.4)*9.81 wing weight is an independent component to get model working 
 
     W_htail = 0.016 * (load_fact_ult*gross_weight*unit.mti_weight)**0.414 * \
             (q*unit.mti_press)**0.168 * (S_htail*unit.mti_area)**0.896 * \
@@ -84,10 +87,9 @@ class CalcGrossWeight(ot.Group):
 
     empty_weight = W_wing + W_htail + W_vtail + W_fuse + W_tailb
     gross_weight = misc_fudge * (payload_weight + empty_weight + \
-            battery_weight_cruise + battery_weight_vtol + vtol_motor_weight + \
-            cruise_motor_weight)
+            battery_weight_cruise + cruise_motor_weight)
     misc_weight = gross_weight * (misc_fudge - 1) / misc_fudge
-    motor_weight = vtol_motor_weight + cruise_motor_weight
+    motor_weight = cruise_motor_weight
     # num_motors = 12
     # motor_weight = 0.75 * misc_weight / num_motors
     # misc_weight = 0.25 * misc_weight
@@ -96,12 +98,12 @@ class CalcGrossWeight(ot.Group):
 
     self.register_output('gross_weight', gross_weight)
     self.register_output('empty_weight', empty_weight)
-    self.register_output('wing_weight', W_wing)
+#     self.register_output('wing_weight', W_wing)
     self.register_output('htail_weight', W_htail)
     self.register_output('vtail_weight', W_vtail)
     self.register_output('fuse_weight', W_fuse)
     self.register_output('tail_boom_weight', W_tailb)
-    self.register_output('motor_weight', motor_weight)
+#     self.register_output('motor_weight', motor_weight)
     self.register_output('misc_weight', misc_weight)
 
     self.nonlinear_solver = om.NonlinearBlockGS()
