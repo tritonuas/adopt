@@ -1,8 +1,7 @@
 '''
 OpenMDAO script for design optimization of UAVs for Triton UAS
 
-Authors: Andrew Fletcher, Wilson Li
-Date: 4/21/2021
+Authors: Andrew Fletcher, Wilson Li, Allyson Chen
 '''
 
 # import necessary packages
