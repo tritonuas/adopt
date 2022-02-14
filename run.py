@@ -37,7 +37,7 @@ air_viscosity = 1.789e-5  # sea level air viscosity
 a = 343     # m/s   speed of sound
 
 # technology constraint inputs
-battery_energy_density = 500*3600  # W-s/kg=J/kg
+battery_energy_density = 80/0.45*3600   # W-s/kg=J/kg 
 empty_weight = 1000*g      # N
 
 # mission inputs
