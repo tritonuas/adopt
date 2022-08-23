@@ -2,7 +2,7 @@ import numpy as np
 
 '''
 lift_vals takes wingspan (wingspan) & weight (weight) to output num_airfoils ellipse
-coordinates representing individual lift vectors at a distance, y, from origin.
+coordinates representing individual lift vectors at a distance, y, from adopt.origin.
 '''
 def get_lift_vals(wingspan, weight, num_airfoils):
     lift_vals = np.zeros((num_airfoils,2))

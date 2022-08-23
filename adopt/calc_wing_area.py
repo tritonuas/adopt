@@ -8,10 +8,10 @@ class CalcWingArea(ot.Group):
 
   def setup(self):
     wingpsan = self.declare_input('wingspan', val=11)
-    mac = self.declare_input('wing_mac', val=1)
+    mac = self.declare_input('wing_mean_aerodynamic_chord', val=1)
 
     wing_area = wingpsan*mac
-    ar = wingpsan**2/wing_area
+    wing_aspect_ratio = wingpsan**2/wing_area
 
     self.register_output('wing_area', wing_area)
-    self.register_output('ar', ar)
+    self.register_output('wing_aspect_ratio', wing_aspect_ratio)

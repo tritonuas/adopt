@@ -26,7 +26,7 @@ indep_var_comp.add_output('omega', val=np.zeros(3), units='deg/s') # Rotation ra
 indep_var_comp.add_output('Mach_number', val=0.145) # Freestream Mach number
 indep_var_comp.add_output('re', val=3.4e6, units='1/m') # Freestream Reynolds number
 indep_var_comp.add_output('rho', val=1.225, units='kg/m**3') # Freestream air density
-indep_var_comp.add_output('cg', val=np.zeros((3)), units='m') # Aircraft center of gravity
+indep_var_comp.add_output('center_of_mass', val=np.zeros((3)), units='m') # Aircraft center of gravity
 # Add vars to model, promoting is a quick way of automatically connecting inputs
 # and outputs of different OpenMDAO components
 prob.model.add_subsystem('flight_vars', indep_var_comp, promotes=['*'])
@@ -90,7 +90,7 @@ prob.model.add_subsystem(name, geom_group)
 aero_group = AeroPoint(surfaces=[surface], rotational=True)
 point_name = 'aero_point_0'
 prob.model.add_subsystem(point_name, aero_group,
-                         promotes_inputs=['v', 'alpha', 'beta', 'omega', 'Mach_number', 're', 'rho', 'cg'])
+                         promotes_inputs=['v', 'alpha', 'beta', 'omega', 'Mach_number', 're', 'rho', 'center_of_mass'])
 
 # Connect the mesh from the geometry component to the analysis point
 prob.model.connect(name + '.mesh', point_name + '.' + name + '.def_mesh')

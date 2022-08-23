@@ -29,7 +29,7 @@ class HsWeightAnalyticModel(ot.Group):
     skin = 2*hs_area*carbon_epoxy_area_density # these are defined in matlab
     htail = hs_span*hs_spar_length_density     # these are defined in matlab
     
-    hs_weight = 9.81*hs_weight # convert from kg to N
+    hs_weight = 9.81*hs_weight # convert from adopt.kg to N
     hs_weight = hs_weight*hs_weight_fudge_factor
 
     self.register_output("hs_weight", hs_weight)

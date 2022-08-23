@@ -29,9 +29,9 @@ class VsWeightAnalyticModel(ot.Group):
     
     vs_weight = 2*vs_area*carbon_epoxy_area_density + vs_span*vs_spar_length_density # multiply area density by 2 to account for the top and bottom tail skins
     skin = 2*vs_area*carbon_epoxy_area_density # these are defined in matlab
-    vtail = vs_span*vs_spar_length_density     # these are defined in matlab
+    vertical_stabilizer = vs_span*vs_spar_length_density     # these are defined in matlab
     
-    vs_weight = 9.81*vs_weight # convert from kg to N
+    vs_weight = 9.81*vs_weight # convert from adopt.kg to N
     vs_weight = vs_weight*vs_weight_fudge_factor 
 
     self.register_output("vs_weight", vs_weight)

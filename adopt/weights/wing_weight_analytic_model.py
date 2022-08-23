@@ -35,7 +35,7 @@ class WingWeightAnalyticModel(ot.Group):
     
     
     wing_weight = 2*wing_area*(carbon_epoxy_area_density+divinycell_area_density) + wing_span*wing_spar_length_density # multiply area density by 2 to account for the top and bottom wing skins
-    wing_weight = 9.81*wing_weight # convert from kg to N
+    wing_weight = 9.81*wing_weight # convert from adopt.kg to N
     wing_weight = wing_weight*wing_weight_fudge_factor 
 
     self.register_output("wing_weight", wing_weight)
