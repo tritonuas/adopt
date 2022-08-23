@@ -25,7 +25,7 @@ class StaticStabilityModel(csdl.Model):
         vertical_stabilizer_center_of_mass = self.declare_variable('vertical_stabilizer_center_of_mass', val = 0.9)
         fuselage_len = self.declare_variable('fuselage_length', val = 7)
         tail_boom_length = self.declare_variable('tail_boom_length', val = 4)
-        batt_center_of_mass = self.declare_variable('batt_center_of_mass', val = 0.12)
+        battery_center_of_mass = self.declare_variable('battery_center_of_mass', val = 0.12)
 
         fuselage_center_of_mass = 0.5 * fuselage_len
         back_prop_center_of_mass = fuselage_len + 0.25
@@ -33,7 +33,7 @@ class StaticStabilityModel(csdl.Model):
         wing_center_of_mass = wing_center_of_mass * fuselage_len
         horizontal_stabilizer_center_of_mass = wing_center_of_mass + tail_boom_length
         vertical_stabilizer_center_of_mass = vertical_stabilizer_center_of_mass * tail_boom_length + wing_center_of_mass
-        batt_center_of_mass = batt_center_of_mass * fuselage_len
+        battery_center_of_mass = battery_center_of_mass * fuselage_len
 
         tail_boom_center_of_mass = wing_center_of_mass + 0.5 * tail_boom_length
 
@@ -45,13 +45,13 @@ class StaticStabilityModel(csdl.Model):
         w6 = (1 - wing_battery_weight_ratio) * battery_weight + misc_weight
         w7 = tail_boom_weight
         wx = w1*wing_center_of_mass + w2*horizontal_stabilizer_center_of_mass + w3*vertical_stabilizer_center_of_mass + w4*fuselage_center_of_mass + \
-                w5*back_prop_center_of_mass + w6*batt_center_of_mass + w7*tail_boom_center_of_mass
+                w5*back_prop_center_of_mass + w6*battery_center_of_mass + w7*tail_boom_center_of_mass
         center_of_mass = wx / (w1+w2+w3+w4+w5+w6+w7)
 
         wing_aspect_ratio = self.declare_variable('wing_aspect_ratio')
         W_mean_aerodynamic_chord = self.declare_variable('wing_mean_aerodynamic_chord')
         wing_area = self.declare_variable('wing_area', val=1.)
-        wingspan = self.declare_variable('wingspan')
+        wing_span = self.declare_variable('wing_span')
         wing_sweep = self.declare_variable('wing_sweep_angle', val=0)
         wing_taper = self.declare_variable('wing_taper_ratio')
         horizontal_stabilizer_aspect_ratio = self.declare_variable('horizontal_stabilizer_aspect_ratio')
@@ -61,7 +61,7 @@ class StaticStabilityModel(csdl.Model):
         vertical_stabilizer_mean_aerodynamic_chord = self.declare_variable('vertical_stabilizer_mean_aerodynamic_chord')
         vertical_stabilizer_area = self.declare_variable('vertical_stabilizer_area')
 
-        dihedral = self.declare_variable('dihedral', val=2/180*np.pi)
+        wing_dihedral = self.declare_variable('wing_dihedral', val=2/180*np.pi)
 
         C_l_alpha = 2 * np.pi
 
@@ -90,7 +90,7 @@ class StaticStabilityModel(csdl.Model):
         c_h = L_h * horizontal_stabilizer_area / W_mean_aerodynamic_chord / wing_area
 
         L_v = vertical_stabilizer_ac - W_ac
-        c_v = L_v * vertical_stabilizer_area / wingspan / wing_area
+        c_v = L_v * vertical_stabilizer_area / wing_span / wing_area
 
         horizontal_stabilizer_ratio = horizontal_stabilizer_area / wing_area
         vertical_stabilizer_ratio = vertical_stabilizer_area / wing_area
@@ -99,11 +99,11 @@ class StaticStabilityModel(csdl.Model):
         C_mq = -2 * eta_h * C_L_alphat_h * horizontal_stabilizer_ratio * ((horizontal_stabilizer_ac - center_of_mass) / W_mean_aerodynamic_chord)**2
         C_malpha = C_L_alpha_w * ((center_of_mass-W_ac)/W_mean_aerodynamic_chord) - C_L_alpha_h * horizontal_stabilizer_ratio * ((horizontal_stabilizer_ac-center_of_mass)/W_mean_aerodynamic_chord)
 
-        C_lbeta = -0.66 * dihedral
+        C_lbeta = -0.66 * wing_dihedral
         C_lp = -C_Lalpha/12*(1+3*wing_taper)/(1+wing_taper)
-        C_nbeta = C_L_alpha_v * vertical_stabilizer_ratio * (vertical_stabilizer_ac - center_of_mass) / wingspan
+        C_nbeta = C_L_alpha_v * vertical_stabilizer_ratio * (vertical_stabilizer_ac - center_of_mass) / wing_span
         C_ybeta = -C_L_alpha_v * vertical_stabilizer_ratio
-        C_nr = -2 * C_L_alphat_v * eta_v * vertical_stabilizer_ratio * ((vertical_stabilizer_ac-center_of_mass)/wingspan)**2
+        C_nr = -2 * C_L_alphat_v * eta_v * vertical_stabilizer_ratio * ((vertical_stabilizer_ac-center_of_mass)/wing_span)**2
 
         self.register_output('center_of_mass', center_of_mass)
         self.register_output('np', x_np)

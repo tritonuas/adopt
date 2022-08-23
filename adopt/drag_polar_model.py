@@ -16,7 +16,7 @@ class DragPolarModel(csdl.Model):
     gross_weight = self.declare_variable('gross_weight', val=default_gross_mass*g)
     
     cD0 = self.declare_variable('cD0', val=0.35)
-    e = self.declare_variable('oswald_eff_factor', val=0.730947)
+    e = self.declare_variable('oswald_efficiency_factor', val=0.730947)
 
     k = 1/(np.pi*e*wing_aspect_ratio)
 

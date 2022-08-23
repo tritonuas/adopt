@@ -15,7 +15,7 @@ misc_weight_fudge = 0.25
 
 q = 1/2*air_dens*cruise_vel**2
 
-wingspan = 11.1
+wing_span = 11.1
 wing_mean_aerodynamic_chord = 1.16
 wing_taper = 0.45
 wing_sweep = 0
@@ -26,13 +26,13 @@ tailspan = 3
 tail_mean_aerodynamic_chord = 1
 horizontal_stabilizer_sweep = 0
 horizontal_stabilizer_taper = 0.45
-horizontal_stabilizer_t = 0.18
+horizontal_stabilizer_thickness = 0.18
 
 vertical_stabilizer_span = 2
 vertical_stabilizer_mean_aerodynamic_chord = 1
 vertical_stabilizer_sweep = 0
 vertical_stabilizer_taper = 0.45
-vertical_stabilizer_t = 0.12
+vertical_stabilizer_thickness = 0.12
 
 fuselage_width = 1.5    # m
 fuselage_height = 1.5   # m
@@ -41,17 +41,17 @@ tail_len = 3
 fuselage_wetted = fuselage_len * 2 * np.pi * np.sqrt((fuselage_width**2+fuselage_height**2)/2)
 fuselage_depth = 1/2 * (fuselage_width + fuselage_height)
 
-wing_area = wingspan * wing_mean_aerodynamic_chord
-wing_aspect_ratio = wingspan**2 / wing_area
+wing_area = wing_span * wing_mean_aerodynamic_chord
+wing_aspect_ratio = wing_span**2 / wing_area
 wing_thickness_to_chord_ratio = wing_thickness / wing_mean_aerodynamic_chord
 
 horizontal_stabilizer_area = tailspan * tail_mean_aerodynamic_chord
 horizontal_stabilizer_aspect_ratio = tailspan**2 / horizontal_stabilizer_area
-horizontal_stabilizer_thickness_to_chord_ratio = horizontal_stabilizer_t / tail_mean_aerodynamic_chord
+horizontal_stabilizer_thickness_to_chord_ratio = horizontal_stabilizer_thickness / tail_mean_aerodynamic_chord
 
 vertical_stabilizer_area = vertical_stabilizer_span * vertical_stabilizer_mean_aerodynamic_chord
 vertical_stabilizer_aspect_ratio = vertical_stabilizer_span**2 / vertical_stabilizer_area
-vertical_stabilizer_thickness_to_chord_ratio = vertical_stabilizer_t / vertical_stabilizer_mean_aerodynamic_chord
+vertical_stabilizer_thickness_to_chord_ratio = vertical_stabilizer_thickness / vertical_stabilizer_mean_aerodynamic_chord
 
 while True:
     wing_weight = 0.036 * (wing_area*unit.mti_area)**0.758 * (battery*unit.mti_weight)**0.0035 * \
@@ -101,7 +101,7 @@ weights += misc_weight * np.array([0, 0, 0, 0, 0, 1])
 wing_center_of_mass = 0.45
 horizontal_stabilizer_center_of_mass = 0.9
 vertical_stabilizer_center_of_mass = 0.9
-batt_center_of_mass = 0.12
+battery_center_of_mass = 0.12
 
 fuselage_center_of_mass = 0.5 * fuselage_len
 back_prop_center_of_mass = fuselage_len + 0.25
@@ -109,7 +109,7 @@ back_prop_center_of_mass = fuselage_len + 0.25
 wing_center_of_mass = wing_center_of_mass * fuselage_len
 horizontal_stabilizer_center_of_mass = horizontal_stabilizer_center_of_mass * fuselage_len
 vertical_stabilizer_center_of_mass = vertical_stabilizer_center_of_mass * fuselage_len
-batt_center_of_mass = batt_center_of_mass * fuselage_len
+battery_center_of_mass = battery_center_of_mass * fuselage_len
 
 w1 = wing_weight + battery * wing_battery_weight_ratio + 8 * motor_weight
 w2 = horitontal_stabilizer_weight + 2 * motor_weight
@@ -123,11 +123,11 @@ w6 = (1 - wing_battery_weight_ratio) * battery + misc_weight
 # ws += motor_weight * np.array([8, 0, 0, 0, 2, 0])
 # ws += misc_weight * np.array([0, 0, 0, 0, 0, 1])
 
-# center_of_masss = fuselage_len * np.array([wing_center_of_mass, horizontal_stabilizer_center_of_mass, vertical_stabilizer_center_of_mass, fuselage_center_of_mass, back_prop_center_of_mass, batt_center_of_mass])
+# center_of_masss = fuselage_len * np.array([wing_center_of_mass, horizontal_stabilizer_center_of_mass, vertical_stabilizer_center_of_mass, fuselage_center_of_mass, back_prop_center_of_mass, battery_center_of_mass])
 # print(center_of_masss[0])
 # weighted_center_of_masss = center_of_masss[0]*ws[0]+center_of_masss[1]*ws[1]+center_of_masss[2]*ws[2]+center_of_masss[3]*ws[3]+center_of_masss[4]*ws[4]+center_of_masss[5]*ws[5]
 # center_of_mass = weighted_center_of_mass / ot.sum(weights)
-wx = w1*wing_center_of_mass + w2*horizontal_stabilizer_center_of_mass + w3*vertical_stabilizer_center_of_mass + w4*fuselage_center_of_mass + w5*back_prop_center_of_mass + w6*batt_center_of_mass
+wx = w1*wing_center_of_mass + w2*horizontal_stabilizer_center_of_mass + w3*vertical_stabilizer_center_of_mass + w4*fuselage_center_of_mass + w5*back_prop_center_of_mass + w6*battery_center_of_mass
 center_of_mass = wx / (w1+w2+w3+w4+w5+w6)
 
 print(wing_center_of_mass)
@@ -135,7 +135,7 @@ print(horizontal_stabilizer_center_of_mass)
 print(vertical_stabilizer_center_of_mass)
 print(fuselage_center_of_mass)
 print(back_prop_center_of_mass)
-print(batt_center_of_mass)
+print(battery_center_of_mass)
 
 print(w1/g)
 print(w2/g)
@@ -149,9 +149,9 @@ print(w6/g)
 # vertical_stabilizer_center_of_mass = 6.25
 # fuselage_center_of_mass = 3.5
 # back_prop_center_of_mass = 7.25
-# batt_center_of_mass = 0.75
+# battery_center_of_mass = 0.75
 # 
-# center_of_mass_indiv = np.array([wing_center_of_mass, horizontal_stabilizer_center_of_mass, vertical_stabilizer_center_of_mass, fuselage_center_of_mass, back_prop_center_of_mass, batt_center_of_mass])
+# center_of_mass_indiv = np.array([wing_center_of_mass, horizontal_stabilizer_center_of_mass, vertical_stabilizer_center_of_mass, fuselage_center_of_mass, back_prop_center_of_mass, battery_center_of_mass])
 # 
 # center_of_mass = (weights @ center_of_mass_indiv) / sum(weights)
 
@@ -185,7 +185,7 @@ L_h = horizontal_stabilizer_ac - W_ac
 c_h = L_h * horizontal_stabilizer_area / wing_mean_aerodynamic_chord / wing_area
 
 L_v = vertical_stabilizer_ac - W_ac
-c_v = L_v * vertical_stabilizer_area / wingspan / wing_area
+c_v = L_v * vertical_stabilizer_area / wing_span / wing_area
 
 horizontal_stabilizer_ratio = horizontal_stabilizer_area / wing_area
 vertical_stabilizer_ratio = vertical_stabilizer_area / wing_area
@@ -194,21 +194,21 @@ C_Lalpha = C_L_alpha_w + C_L_alpha_h * horizontal_stabilizer_ratio
 C_mq = -2 * eta_h * C_L_alphat_h * horizontal_stabilizer_ratio * ((horizontal_stabilizer_ac - center_of_mass) / wing_mean_aerodynamic_chord)**2
 C_malpha = C_L_alpha_w * ((center_of_mass-W_ac)/wing_mean_aerodynamic_chord) - C_L_alpha_h * horizontal_stabilizer_ratio * ((horizontal_stabilizer_ac-center_of_mass)/wing_mean_aerodynamic_chord)
 
-dihedral = 2 / 180 * np.pi
+wing_dihedral = 2 / 180 * np.pi
 
-C_l_beta = -0.66 * dihedral
+C_l_beta = -0.66 * wing_dihedral
 C_l_p = -C_Lalpha/12*(1+3*wing_taper)/(1+wing_taper)
-C_nbeta = C_L_alpha_v * vertical_stabilizer_ratio * (vertical_stabilizer_ac - center_of_mass) / wingspan
+C_nbeta = C_L_alpha_v * vertical_stabilizer_ratio * (vertical_stabilizer_ac - center_of_mass) / wing_span
 C_ybeta = -C_L_alpha_v * vertical_stabilizer_ratio
-C_nr = -C_L_alphat_v * eta_v * vertical_stabilizer_ratio * ((vertical_stabilizer_ac-center_of_mass)/wingspan)**2
+C_nr = -C_L_alphat_v * eta_v * vertical_stabilizer_ratio * ((vertical_stabilizer_ac-center_of_mass)/wing_span)**2
 
 Rx = 0.25
 Ry = 0.38
 Rz = 0.39
 
-Ixx = (wingspan*unit.mti_len)**2 * (gross*unit.mti_weight) * Rx**2 / unit.g / 4 / unit.mti_inertia
+Ixx = (wing_span*unit.mti_len)**2 * (gross*unit.mti_weight) * Rx**2 / unit.g / 4 / unit.mti_inertia
 Iyy = (fuselage_len*unit.mti_len)**2 * (gross*unit.mti_weight) * Ry**2 / unit.g / 4 / unit.mti_inertia
-Izz = ((fuselage_len+wingspan)/2*unit.mti_len)**2 * (gross*unit.mti_weight) * Rz**2 / unit.g / 4 / unit.mti_inertia
+Izz = ((fuselage_len+wing_span)/2*unit.mti_len)**2 * (gross*unit.mti_weight) * Rz**2 / unit.g / 4 / unit.mti_inertia
 
 C_L_q = 0.01    # This is a guess. I have no equation
 C_yr = 0.25     # Also a guess lol
@@ -220,10 +220,10 @@ M_q = q*wing_mean_aerodynamic_chord**2*wing_area/2/V_0/Iyy*C_mq
 M_w = q*wing_mean_aerodynamic_chord*wing_area/Iyy*C_malpha/V_0
 Z_q = -q*wing_mean_aerodynamic_chord*wing_area/2/m/V_0*C_L_q
 Y_v = q*wing_area/m*C_ybeta/V_0
-N_r = q*wing_area*wingspan**2/2/Izz/V_0*C_nr
-N_v = q*wing_area*wingspan/Izz*C_nbeta/V_0
-Y_r = q*wing_area*wingspan/2/m/V_0*C_yr
-L_p = q*wing_area*wingspan**2/2/Ixx/V_0*C_l_p
+N_r = q*wing_area*wing_span**2/2/Izz/V_0*C_nr
+N_v = q*wing_area*wing_span/Izz*C_nbeta/V_0
+Y_r = q*wing_area*wing_span/2/m/V_0*C_yr
+L_p = q*wing_area*wing_span**2/2/Ixx/V_0*C_l_p
 
 omega_sp = np.sqrt(Z_w*M_q - M_w*(V_0+Z_q))
 zeta_sp = -(Z_w+M_q)/2/omega_sp

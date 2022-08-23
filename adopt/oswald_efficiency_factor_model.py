@@ -30,5 +30,5 @@ class OswaldEfficiencyFactorModel(csdl.Model):
     k_m = 1
     e = e_theoretical*k_f*k_d0*k_m
 
-    self.register_output('oswald_eff_factor', e)
+    self.register_output('oswald_efficiency_factor', e)
     

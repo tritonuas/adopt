@@ -7,7 +7,7 @@ class CalcWingArea(ot.Group):
     pass
 
   def setup(self):
-    wingpsan = self.declare_input('wingspan', val=11)
+    wingpsan = self.declare_input('wing_span', val=11)
     mac = self.declare_input('wing_mean_aerodynamic_chord', val=1)
 
     wing_area = wingpsan*mac

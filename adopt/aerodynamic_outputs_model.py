@@ -20,7 +20,7 @@ class AerodynamicOutputsModel(csdl.Model):
     lift = self.declare_variable('lift')
     climb_gradient = self.declare_variable('min_climb_gradient', val=0.1)
     cD0 = self.declare_variable('cD0', val=0.02)
-    e = self.declare_variable('oswald_eff_factor', val=0.8)
+    e = self.declare_variable('oswald_efficiency_factor', val=0.8)
     wing_ar = self.declare_variable('wing_ar', val=11.)
     velocity_cruise = self.declare_variable('velocity_cruise', val=20.)
     eta = self.declare_variable('total_propulsive_efficiency', val=0.9685)

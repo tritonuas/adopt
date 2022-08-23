@@ -94,7 +94,7 @@ g.component_box &gt; rect {
     fill: none;
 }
 
-.bordR1, .bordR2, .bordR3, .bordR4, .ssMid, .grpMid, .svMid, .vsMid, .vMid, .sgrpMid, .grpsMid {
+.bordR1, .bordR2, .bordR3, .bordR4, .ssMid, .grpMid, .svMid, .vertical_stabilizerMid, .vMid, .sgrpMid, .grpsMid {
     stroke: none;
     stroke-width: 0;
     fill-opacity: 1;

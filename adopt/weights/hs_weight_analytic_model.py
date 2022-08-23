@@ -10,26 +10,26 @@ class HsWeightAnalyticModel(ot.Group):
 
     blue_foam_density = self.declare_input("blue_foam_density")
     carbon_epoxy_density = self.declare_input("carbon_epoxy_density")
-    hs_spar_num = self.declare_input("hs_spar_num")
-    hs_spar_width= self.declare_input("hs_spar_width")
-    hs_num_plies = self.declare_input("hs_num_plies")
-    hs_area = self.declare_input("hs_area")
-    hs_root_thickness = self.declare_input("hs_root_thickness")
-    hs_tip_thickness= self.declare_input("hs_tip_thickness")
-    hs_span = self.declare_input("hs_span")
-    hs_weight_fudge_factor = self.declare_input("hs_weight_fudge_factor")
+    horizontal_stabilizer_spar_num = self.declare_input("horizontal_stabilizer_spar_num")
+    horizontal_stabilizer_spar_width= self.declare_input("horizontal_stabilizer_spar_width")
+    horizontal_stabilizer_num_plies = self.declare_input("horizontal_stabilizer_num_plies")
+    horizontal_stabilizer_area = self.declare_input("horizontal_stabilizer_area")
+    horizontal_stabilizer_root_thickness = self.declare_input("horizontal_stabilizer_root_thickness")
+    horizontal_stabilizer_tip_thickness= self.declare_input("horizontal_stabilizer_tip_thickness")
+    horizontal_stabilizer_span = self.declare_input("horizontal_stabilizer_span")
+    horizontal_stabilizer_weight_fudge_factor = self.declare_input("horizontal_stabilizer_weight_fudge_factor")
 
 
     carbon_epoxy_thickness = 0.0003
-    carbon_epoxy_area_density = carbon_epoxy_density*hs_num_plies*carbon_epoxy_thickness
+    carbon_epoxy_area_density = carbon_epoxy_density*horizontal_stabilizer_num_plies*carbon_epoxy_thickness
     
-    hs_spar_length_density = ((hs_tip_thickness+hs_root_thickness)/2)*hs_spar_num*blue_foam_density*hs_spar_width
+    horizontal_stabilizer_spar_length_density = ((horizontal_stabilizer_tip_thickness+horizontal_stabilizer_root_thickness)/2)*horizontal_stabilizer_spar_num*blue_foam_density*horizontal_stabilizer_spar_width
     
-    hs_weight = 2*hs_area*carbon_epoxy_area_density + hs_span*hs_spar_length_density # multiply area density by 2 to account for the two sides of tail skins
-    skin = 2*hs_area*carbon_epoxy_area_density # these are defined in matlab
-    htail = hs_span*hs_spar_length_density     # these are defined in matlab
+    horizontal_stabilizer_weight = 2*horizontal_stabilizer_area*carbon_epoxy_area_density + horizontal_stabilizer_span*horizontal_stabilizer_spar_length_density # multiply area density by 2 to account for the two sides of tail skins
+    skin = 2*horizontal_stabilizer_area*carbon_epoxy_area_density # these are defined in matlab
+    htail = horizontal_stabilizer_span*horizontal_stabilizer_spar_length_density     # these are defined in matlab
     
-    hs_weight = 9.81*hs_weight # convert from adopt.kg to N
-    hs_weight = hs_weight*hs_weight_fudge_factor
+    horizontal_stabilizer_weight = 9.81*horizontal_stabilizer_weight # convert from adopt.kg to N
+    horizontal_stabilizer_weight = horizontal_stabilizer_weight*horizontal_stabilizer_weight_fudge_factor
 
-    self.register_output("hs_weight", hs_weight)
+    self.register_output("horizontal_stabilizer_weight", horizontal_stabilizer_weight)

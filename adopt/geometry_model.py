@@ -7,7 +7,7 @@ class GeometryModel(csdl.Model):
     pass
 
   def define(self):
-    wingpsan = self.declare_variable('wingspan', val=11)
+    wingpsan = self.declare_variable('wing_span', val=11)
     wing_mean_aerodynamic_chord = self.declare_variable('wing_mean_aerodynamic_chord', val=1)
     wing_taper_ratio = self.declare_variable('wing_taper_ratio', val=0.45)
     wing_thickness = self.declare_variable('wing_thickness', val=0.12)

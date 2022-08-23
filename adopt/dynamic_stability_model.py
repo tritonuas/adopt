@@ -20,14 +20,14 @@ class DynamicStabilityModel(csdl.Model):
         default_gross_mass = 13.5
         g = 9.81
         gross_weight = self.declare_variable('gross_weight', val=default_gross_mass*g)
-        wingspan = self.declare_variable('wingspan')
+        wing_span = self.declare_variable('wing_span')
         fuselage_len = self.declare_variable('fuselage_length', val = 1.1)
 
-        Ixx = (wingspan*unit.mti_len)**2 * (gross_weight*unit.mti_weight) * Rx**2 / \
+        Ixx = (wing_span*unit.mti_len)**2 * (gross_weight*unit.mti_weight) * Rx**2 / \
                 unit.g / 4 / unit.mti_inertia
         Iyy = (fuselage_len*unit.mti_len)**2 * (gross_weight*unit.mti_weight) * Ry**2 / \
                 unit.g / 4 / unit.mti_inertia
-        Izz = ((fuselage_len+wingspan)/2*unit.mti_len)**2 * (gross_weight*unit.mti_weight) * \
+        Izz = ((fuselage_len+wing_span)/2*unit.mti_len)**2 * (gross_weight*unit.mti_weight) * \
                 Rz**2 / unit.g / 4 / unit.mti_inertia
 
         V_0 = self.declare_variable('velocity_cruise', val=20.)
@@ -36,7 +36,7 @@ class DynamicStabilityModel(csdl.Model):
 
         wing_area = self.declare_variable('wing_area', val=1.)
         W_mean_aerodynamic_chord = self.declare_variable('W_mean_aerodynamic_chord')
-        wingspan = self.declare_variable('wingpsan')
+        wing_span = self.declare_variable('wingpsan')
 
         C_Lalpha = self.declare_variable('C_Lalpha')
         C_mq = self.declare_variable('C_mq')
@@ -53,10 +53,10 @@ class DynamicStabilityModel(csdl.Model):
         M_w = q*W_mean_aerodynamic_chord*wing_area/Iyy*C_malpha/V_0
         Z_q = -q*W_mean_aerodynamic_chord*wing_area/2/m/V_0*C_lq
         Y_v = q*wing_area/m*C_ybeta/V_0
-        N_r = q*wing_area*wingspan**2/2/Izz/V_0*C_nr
-        N_v = q*wing_area*wingspan/Izz*C_nbeta/V_0
-        Y_r = q*wing_area*wingspan/2/m/V_0*C_yr
-        L_p = q*wing_area*wingspan**2/2/Ixx/V_0*C_lp
+        N_r = q*wing_area*wing_span**2/2/Izz/V_0*C_nr
+        N_v = q*wing_area*wing_span/Izz*C_nbeta/V_0
+        Y_r = q*wing_area*wing_span/2/m/V_0*C_yr
+        L_p = q*wing_area*wing_span**2/2/Ixx/V_0*C_lp
 
         omega_sp_2 = Z_w*M_q - M_w*(V_0+Z_q)
         zeta_sp_2 = (Z_w+M_q)**2/4/omega_sp_2

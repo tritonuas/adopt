@@ -46,10 +46,10 @@ total_propulsive_efficiency = 0.9685
 # Initial Guesses for Design Variables
 # wing variables
 wing_mean_aerodynamic_chord = 1          # m
-wingspan = 11      # m
+wing_span = 11      # m
 wing_taper_ratio = 0.45
 wing_sweep_angle = 0
-dihedral = 0
+wing_dihedral = 0
 wing_thickness = 0.12
 
 # tail variables
@@ -57,13 +57,13 @@ horizontal_stabilizer_span = 3.
 horizontal_stabilizer_mean_aerodynamic_chord = 1.5
 horizontal_stabilizer_sweep = 0
 horizontal_stabilizer_taper = 0.45
-horizontal_stabilizer_t = 0.18
+horizontal_stabilizer_thickness = 0.18
 
 vertical_stabilizer_span = 2.
 vertical_stabilizer_mean_aerodynamic_chord = 1.
 vertical_stabilizer_sweep = 0
 vertical_stabilizer_taper = 0.45
-vertical_stabilizer_t = 0.12
+vertical_stabilizer_thickness = 0.12
 
 # tail boom variables
 tail_boom_length = 4
@@ -73,8 +73,8 @@ tail_boom_radius = 0.2
 wing_center_of_mass = 0.45
 horizontal_stabilizer_center_of_mass = 0.9
 vertical_stabilizer_center_of_mass = 0.9
-batt_center_of_mass = 0.12
-tailb_center_of_mass = 0.8
+battery_center_of_mass = 0.12
+tail_boom_center_of_mass = 0.8
 
 # twist distribution? Don't have any spanwise analysis
 
@@ -89,7 +89,7 @@ min_climb_speed = 6  # m/s
 ultimate_load_factor = 4.
 
 # geometric constraints
-max_wingspan = 11   # m
+max_wing_span = 11   # m
 fuselage_width = 1.5      # m
 fuselage_height = 2.     # m
 fuselage_length = 10.     # m
@@ -116,7 +116,7 @@ indep_comp.add_output('vtol_motor_weight', vtol_motor_weight)
 indep_comp.add_output('cruise_motor_weight', cruise_motor_weight)
 indep_comp.add_output('total_propulsive_efficiency', total_propulsive_efficiency)
 
-indep_comp.add_output('wingspan', wingspan)
+indep_comp.add_output('wing_span', wing_span)
 indep_comp.add_output('wing_mean_aerodynamic_chord', wing_mean_aerodynamic_chord)   # Mean aerodynamic chord
 indep_comp.add_output('wing_taper_ratio', wing_taper_ratio)
 indep_comp.add_output('wing_sweep_angle', wing_sweep_angle)
@@ -126,13 +126,13 @@ indep_comp.add_output('horizontal_stabilizer_span', horizontal_stabilizer_span)
 indep_comp.add_output('horizontal_stabilizer_mean_aerodynamic_chord', horizontal_stabilizer_mean_aerodynamic_chord)
 indep_comp.add_output('horizontal_stabilizer_taper', horizontal_stabilizer_taper)
 indep_comp.add_output('horizontal_stabilizer_sweep', horizontal_stabilizer_sweep)
-indep_comp.add_output('horizontal_stabilizer_thickness', horizontal_stabilizer_t)
+indep_comp.add_output('horizontal_stabilizer_thickness', horizontal_stabilizer_thickness)
 
 indep_comp.add_output('vertical_stabilizer_span', vertical_stabilizer_span)
 indep_comp.add_output('vertical_stabilizer_mean_aerodynamic_chord', vertical_stabilizer_mean_aerodynamic_chord)
 indep_comp.add_output('vertical_stabilizer_taper', vertical_stabilizer_taper)
 indep_comp.add_output('vertical_stabilizer_sweep', vertical_stabilizer_sweep)
-indep_comp.add_output('vertical_stabilizer_thickness', vertical_stabilizer_t)
+indep_comp.add_output('vertical_stabilizer_thickness', vertical_stabilizer_thickness)
 
 indep_comp.add_output('tail_boom_radius', tail_boom_radius)
 indep_comp.add_output('tail_boom_length', tail_boom_length)
@@ -144,7 +144,7 @@ indep_comp.add_output('fuselage_length', fuselage_length)
 indep_comp.add_output('wing_center_of_mass', wing_center_of_mass)
 # indep_comp.add_output('horizontal_stabilizer_center_of_mass', horizontal_stabilizer_center_of_mass)
 indep_comp.add_output('vertical_stabilizer_center_of_mass', vertical_stabilizer_center_of_mass)
-indep_comp.add_output('batt_center_of_mass', batt_center_of_mass)
+indep_comp.add_output('battery_center_of_mass', battery_center_of_mass)
 
 indep_comp.add_output('wing_battery_weight_ratio', wing_battery_ratio)
 
@@ -205,7 +205,7 @@ prob.model.add_subsystem('range_comp', range_comp, promotes=['*'])
 
 ''' Specifying Design Variables, Objective, and Constraints '''
 # # Add design variables to the problem
-# prob.model.add_design_var('wingspan')
+# prob.model.add_design_var('wing_span')
 prob.model.add_design_var('wing_mean_aerodynamic_chord')
 prob.model.add_design_var('horizontal_stabilizer_span')
 prob.model.add_design_var('horizontal_stabilizer_mean_aerodynamic_chord')
@@ -217,8 +217,8 @@ prob.model.add_design_var('battery_weight_cruise')
 prob.model.add_design_var('wing_center_of_mass')
 # prob.model.add_design_var('horizontal_stabilizer_center_of_mass')
 prob.model.add_design_var('vertical_stabilizer_center_of_mass')
-prob.model.add_design_var('batt_center_of_mass')
-# prob.model.add_design_var('tailb_center_of_mass')
+prob.model.add_design_var('battery_center_of_mass')
+# prob.model.add_design_var('tail_boom_center_of_mass')
 prob.model.add_design_var('tail_boom_length')
 # prob.model.add_design_var('tail_boom_radius')
 
@@ -226,7 +226,7 @@ prob.model.add_design_var('tail_boom_length')
 prob.model.add_objective('range', scaler=-1)
 
 # # Add the constraints to the problem
-# prob.model.add_constraint('wingspan', upper=max_wingspan, lower=0.1)
+# prob.model.add_constraint('wing_span', upper=max_wing_span, lower=0.1)
 prob.model.add_constraint('wing_mean_aerodynamic_chord', lower=0.1, upper=10.)
 prob.model.add_constraint('horizontal_stabilizer_span', lower=2.5, upper=8.)
 prob.model.add_constraint('horizontal_stabilizer_mean_aerodynamic_chord', lower=0.05, upper=4.)
@@ -248,7 +248,7 @@ prob.model.add_constraint('battery_weight_cruise', lower=0., upper=740*g)
 prob.model.add_constraint('wing_center_of_mass', lower=0.3, upper=0.6)
 # prob.model.add_constraint('horizontal_stabilizer_center_of_mass', lower=0.8, upper=0.95)
 prob.model.add_constraint('vertical_stabilizer_center_of_mass', lower=0.5, upper=0.9)
-prob.model.add_constraint('batt_center_of_mass', lower=0.08, upper=0.9)
+prob.model.add_constraint('battery_center_of_mass', lower=0.08, upper=0.9)
 prob.model.add_constraint('dist_between_horizontal_stabilizer_and_fuse', lower=1.5)
 
 # Static stability constraints
@@ -260,7 +260,7 @@ prob.model.add_constraint('C_Lalpha', lower=0)
 prob.model.add_constraint('C_mq', upper=0)
 prob.model.add_constraint('C_malpha', upper=0)
 prob.model.add_constraint('C_lp', upper=0)
-# prob.model.add_constraint('C_lbeta', upper=0) # dihedral is indepently chosen
+# prob.model.add_constraint('C_lbeta', upper=0) # wing_dihedral is indepently chosen
 prob.model.add_constraint('C_nbeta', lower=0)
 prob.model.add_constraint('C_ybeta', upper=0)
 prob.model.add_constraint('C_nr', upper=0)
@@ -296,13 +296,13 @@ prob.run_driver()   # Runs optimization
 
 ''' Post-optimization functions '''
 num_airfoils = 50
-wing_cl_dist = get_cl_vals(prob['wingspan'], prob['gross_weight'], air_density, \
+wing_cl_dist = get_cl_vals(prob['wing_span'], prob['gross_weight'], air_density, \
     prob['velocity_cruise'], prob['wing_chord_root'], prob['wing_chord_tip'], num_airfoils)
 
 
 # # How to print out problem outputs
 print('wing_area', prob['wing_area'])
-print('wingspan', prob['wingspan'])
+print('wing_span', prob['wing_span'])
 print('cL: ', prob['cL'])
 print('fuselage_length', prob['fuselage_length'])
 print('velocity_cruise: ', prob['velocity_cruise'])
@@ -320,7 +320,7 @@ print('nose_term: ', prob['nose_term'])
 print('tail_boom_term: ', prob['tail_boom_term'])
 
 print()
-print('e: ', prob['oswald_eff_factor'])
+print('e: ', prob['oswald_efficiency_factor'])
 print('cd0: ', prob['cD0'])
 print('cdi: ', prob['cDi'])
 print('L/D: ', prob['l_over_d'])
@@ -368,7 +368,7 @@ print("Total CG location: ", prob['center_of_mass'])
 print('Fuselage length:', prob['fuselage_length'])
 print("Wing CG location: ", prob['wing_center_of_mass']*prob['fuselage_length'])
 print("Vtail CG location: ", prob['vertical_stabilizer_center_of_mass']*prob['tail_boom_length'] + prob['wing_center_of_mass']*prob['fuselage_length'])
-print("Ballast CG location: ", prob['batt_center_of_mass']*prob['fuselage_length'])
+print("Ballast CG location: ", prob['battery_center_of_mass']*prob['fuselage_length'])
 print("Tail boom length: ", prob['tail_boom_length'])
 
 print("Neutral point: ", prob['np'])
