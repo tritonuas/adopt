@@ -8,14 +8,14 @@ class VsWeightAnalyticModel(ot.Group):
 
   def setup(self):
 
-    vertical_stabilizer_spar_num= self.declare_input("vertical_stabilizer_spar_num")
+    vertical_stabilizer_spar_num = self.declare_input("vertical_stabilizer_spar_num")
     vertical_stabilizer_spar_width = self.declare_input("vertical_stabilizer_spar_width")
     
-    carbon_epoxy_density= self.declare_input("carbon_epoxy_density")
-    blue_foam_density= self.declare_input("blue_foam_density")
+    carbon_epoxy_density = self.declare_input("carbon_epoxy_density")
+    blue_foam_density = self.declare_input("blue_foam_density")
     
-    vertical_stabilizer_root_thickness= self.declare_input("vertical_stabilizer_root_thickness")
-    vertical_stabilizer_tip_thickness= self.declare_input("vertical_stabilizer_tip_thickness")
+    vertical_stabilizer_root_thickness = self.declare_input("vertical_stabilizer_root_thickness")
+    vertical_stabilizer_tip_thickness = self.declare_input("vertical_stabilizer_tip_thickness")
     vertical_stabilizer_area = self.declare_input("vertical_stabilizer_area")
     vertical_stabilizer_span = self.declare_input("vertical_stabilizer_span")
     vertical_stabilizer_num_plies = self.declare_input("vertical_stabilizer_num_plies")
