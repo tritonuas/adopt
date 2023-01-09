@@ -1,23 +1,23 @@
-import omtools.api as ot
 import numpy as np
+import csdl
 
-class FuseWeightAnalyticModel(ot.Group):
+class FuseWeightAnalyticModel(csdl.Model):
   
   def initialize(self):
     pass
 
-  def setup(self):
+  def define(self):
 
-    carbon_epoxy_density = self.declare_input("carbon_epoxy_density")
-    fuselage_num_plies = self.declare_input("fuselage_num_plies")
-    bulkhead_num = self.declare_input("bulkhead_num")
-    bulkhead_thickness = self.declare_input("bulkhead_thickness")
-    bulkhead_area_fraction = self.declare_input("bulkhead_area_fraction")
-    plywood_density = self.declare_input("plywood_density")
-    fuselage_height = self.declare_input("fuselage_height")
-    fuselage_width = self.declare_input("fuselage_width")
-    fuselage_length = self.declare_input("fuselage_length")
-    fuselage_weight_fudge_factor = self.declare_input("fuselage_weight_fudge_factor")
+    carbon_epoxy_density = self.declare_variable("carbon_epoxy_density")
+    fuselage_num_plies = self.declare_variable("fuselage_num_plies")
+    bulkhead_num = self.declare_variable("bulkhead_num")
+    bulkhead_thickness = self.declare_variable("bulkhead_thickness")
+    bulkhead_area_fraction = self.declare_variable("bulkhead_area_fraction")
+    plywood_density = self.declare_variable("plywood_density")
+    fuselage_height = self.declare_variable("fuselage_height")
+    fuselage_width = self.declare_variable("fuselage_width")
+    fuselage_length = self.declare_variable("fuselage_length")
+    fuselage_weight_fudge_factor = self.declare_variable("fuselage_weight_fudge_factor")
 
 
     carbon_epoxy_thickness = 0.0003

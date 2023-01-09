@@ -1,25 +1,25 @@
-import omtools.api as ot
 import numpy as np
+import csdl
 
-class VsWeightAnalyticModel(ot.Group):
+class VsWeightAnalyticModel(csdl.Model):
   
   def initialize(self):
     pass
 
-  def setup(self):
+  def define(self):
 
-    vertical_stabilizer_spar_num = self.declare_input("vertical_stabilizer_spar_num")
-    vertical_stabilizer_spar_width = self.declare_input("vertical_stabilizer_spar_width")
+    vertical_stabilizer_spar_num = self.declare_variable("vertical_stabilizer_spar_num")
+    vertical_stabilizer_spar_width = self.declare_variable("vertical_stabilizer_spar_width")
     
-    carbon_epoxy_density = self.declare_input("carbon_epoxy_density")
-    blue_foam_density = self.declare_input("blue_foam_density")
+    carbon_epoxy_density = self.declare_variable("carbon_epoxy_density")
+    blue_foam_density = self.declare_variable("blue_foam_density")
     
-    vertical_stabilizer_root_thickness = self.declare_input("vertical_stabilizer_root_thickness")
-    vertical_stabilizer_tip_thickness = self.declare_input("vertical_stabilizer_tip_thickness")
-    vertical_stabilizer_area = self.declare_input("vertical_stabilizer_area")
-    vertical_stabilizer_span = self.declare_input("vertical_stabilizer_span")
-    vertical_stabilizer_num_plies = self.declare_input("vertical_stabilizer_num_plies")
-    vertical_stabilizer_weight_fudge_factor = self.declare_input("vertical_stabilizer_weight_fudge_factor")
+    vertical_stabilizer_root_thickness = self.declare_variable("vertical_stabilizer_root_thickness")
+    vertical_stabilizer_tip_thickness = self.declare_variable("vertical_stabilizer_tip_thickness")
+    vertical_stabilizer_area = self.declare_variable("vertical_stabilizer_area")
+    vertical_stabilizer_span = self.declare_variable("vertical_stabilizer_span")
+    vertical_stabilizer_num_plies = self.declare_variable("vertical_stabilizer_num_plies")
+    vertical_stabilizer_weight_fudge_factor = self.declare_variable("vertical_stabilizer_weight_fudge_factor")
 
     
     carbon_epoxy_thickness = 0.0003

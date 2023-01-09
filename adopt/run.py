@@ -17,6 +17,7 @@ import matplotlib.pyplot as plt
 # import optimization models/systems
 from adopt.geometry_model import GeometryModel
 from adopt.gross_weight_coupling_model import GrossWeightCouplingModel
+from adopt.weights.analytic_weight_model import AnalyticWeightModel
 from adopt.aerodynamic_outputs_model import AerodynamicOutputsModel
 from adopt.range_model import RangeModel
 from adopt.static_stability_model import StaticStabilityModel
@@ -121,7 +122,7 @@ adopt.create_input('battery_energy_density', battery_energy_density)
 
 adopt.create_input('payload_weight', payload_weight)
 adopt.create_input('battery_weight_cruise', battery_weight_cruise)
-adopt.create_input('wing_weight', wing_weight)
+# adopt.create_input('wing_weight', wing_weight)
 # adopt.create_input('battery_weight_vtol', battery_weight_vtol)
 # adopt.create_input('vtol_motor_weight', vtol_motor_weight)
 adopt.create_input('cruise_motor_weight', cruise_motor_weight)
@@ -173,6 +174,10 @@ adopt.create_input('ultimate_load_factor', ultimate_load_factor)
 # Update geometry based on new design variable values
 geometry_model = GeometryModel()
 adopt.add(submodel=geometry_model, name='geometry_model')
+
+# Add weight model 
+analytic_weight_model = AnalyticWeightModel()
+adopt.add(submodel=analytic_weight_model, name='analytic_weight_model')
 
 # Add coupling group for gross weight
 gross_weight_coupling_model = GrossWeightCouplingModel()
