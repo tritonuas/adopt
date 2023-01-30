@@ -105,7 +105,7 @@ ultimate_load_factor = 4.
 max_wing_span = 3.65    # m
 fuselage_width = 0.21      # m
 fuselage_height = 0.25     # m
-fuselage_length = 1.1      # m
+fuselage_length = 2.2      # m
 
 min_velocity_cruise = 15   #m/s
 
@@ -231,7 +231,7 @@ adopt.add_constraint('horizontal_stabilizer_aspect_ratio', lower=2.5, upper=5.)
 adopt.add_constraint('vertical_stabilizer_span', lower=0.05, upper=1.)
 adopt.add_constraint('vertical_stabilizer_mean_aerodynamic_chord', lower=0.05, upper=0.5)
 adopt.add_constraint('vertical_stabilizer_aspect_ratio', lower=1., upper=3.)
-adopt.add_constraint('fuselage_length', lower=1.1, upper=2.)
+adopt.add_constraint('fuselage_length', lower=1.1, upper=3.)
 adopt.add_constraint('tail_boom_length', lower=0.001, upper=1.)
 # adopt.add_constraint('tail_boom_radius', lower=1e-4, upper=1.)
 adopt.add_constraint('velocity_cruise', lower=min_velocity_cruise)
@@ -394,6 +394,18 @@ print("tau_roll: ", sim['t_roll'])
 
 print()
 print('wing_cl_dist', wing_cl_dist)
+
+
+# testing
+print('air_density',sim['air_density'])
+print('velocity_cruise', sim['velocity_cruise'])
+print('air_viscosity',sim['air_viscosity'])
+print('wing_mean_aerodynamic_chord',sim['wing_mean_aerodynamic_chord'])
+print('nose_length',sim['nose_length'])
+print('horizontal_stabilizer_mean_aerodynamic_chord',sim['horizontal_stabilizer_mean_aerodynamic_chord'])
+print('vertical_stabilizer_mean_aerodynamic_chord',sim['vertical_stabilizer_mean_aerodynamic_chord'])
+
+
 
 # from adopt.csv import reader
 # import matplotlib.pyplot as plt
