@@ -1,23 +1,23 @@
-import omtools.api as ot
 import numpy as np
+import csdl
 
-class HsWeightAnalyticModel(ot.Group):
+class HsWeightAnalyticModel(csdl.Model):
   
   def initialize(self):
     pass
 
-  def setup(self):
+  def define(self):
 
-    blue_foam_density = self.declare_input("blue_foam_density")
-    carbon_epoxy_density = self.declare_input("carbon_epoxy_density")
-    horizontal_stabilizer_spar_num = self.declare_input("horizontal_stabilizer_spar_num")
-    horizontal_stabilizer_spar_width= self.declare_input("horizontal_stabilizer_spar_width")
-    horizontal_stabilizer_num_plies = self.declare_input("horizontal_stabilizer_num_plies")
-    horizontal_stabilizer_area = self.declare_input("horizontal_stabilizer_area")
-    horizontal_stabilizer_root_thickness = self.declare_input("horizontal_stabilizer_root_thickness")
-    horizontal_stabilizer_tip_thickness= self.declare_input("horizontal_stabilizer_tip_thickness")
-    horizontal_stabilizer_span = self.declare_input("horizontal_stabilizer_span")
-    horizontal_stabilizer_weight_fudge_factor = self.declare_input("horizontal_stabilizer_weight_fudge_factor")
+    blue_foam_density = self.declare_variable("blue_foam_density")
+    carbon_epoxy_density = self.declare_variable("carbon_epoxy_density")
+    horizontal_stabilizer_spar_num = self.declare_variable("horizontal_stabilizer_spar_num")
+    horizontal_stabilizer_spar_width= self.declare_variable("horizontal_stabilizer_spar_width")
+    horizontal_stabilizer_num_plies = self.declare_variable("horizontal_stabilizer_num_plies")
+    horizontal_stabilizer_area = self.declare_variable("horizontal_stabilizer_area")
+    horizontal_stabilizer_root_thickness = self.declare_variable("horizontal_stabilizer_root_thickness")
+    horizontal_stabilizer_tip_thickness= self.declare_variable("horizontal_stabilizer_tip_thickness")
+    horizontal_stabilizer_span = self.declare_variable("horizontal_stabilizer_span")
+    horizontal_stabilizer_weight_fudge_factor = self.declare_variable("horizontal_stabilizer_weight_fudge_factor")
 
 
     carbon_epoxy_thickness = 0.0003

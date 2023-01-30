@@ -1,31 +1,29 @@
-import omtools.api as ot
 import numpy as np
+import csdl
 
-class WingWeightAnalyticModel(ot.Group):
+class WingWeightAnalyticModel(csdl.Model):
   
   def initialize(self):
     pass
 
-  def setup(self):
+  def define(self):
 
-    carbon_epoxy_thickness = self.declare_input("carbon_epoxy_thickness")
-    carbon_epoxy_density = self.declare_input("carbon_epoxy_density")
+    carbon_epoxy_thickness = self.declare_variable("carbon_epoxy_thickness")
+    carbon_epoxy_density = self.declare_variable("carbon_epoxy_density")
     
-    divinycell_density = self.declare_input("divinycell_density")
-    divinycell_thickness = self.declare_input("divinycell_thickness")
+    divinycell_density = self.declare_variable("divinycell_density")
+    divinycell_thickness = self.declare_variable("divinycell_thickness")
     
-    balsa_density = self.declare_input("balsa_density")
+    balsa_density = self.declare_variable("balsa_density")
     
-    wing_tip_thickness = self.declare_input("wing_tip_thickness")
-    wing_root_thickness = self.declare_input("wing_root_thickness")
-    wing_spar_width = self.declare_input("wing_spar_width")
-    wing_spar_num = self.declare_input("wing_spar_num")
-    wing_span = self.declare_input("wing_span")
-    wing_area = self.declare_input("num_wing_spar")
-    wing_num_plies = self.declare_input("wing_num_plies")
-    wing_weight_fudge_factor = self.declare_input("wing_weight_fudge_factor")
-
-
+    wing_tip_thickness = self.declare_variable("wing_tip_thickness")
+    wing_root_thickness = self.declare_variable("wing_root_thickness")
+    wing_spar_width = self.declare_variable("wing_spar_width")
+    wing_spar_num = self.declare_variable("wing_spar_num")
+    wing_span = self.declare_variable("wing_span")
+    wing_area = self.declare_variable("num_wing_spar")
+    wing_num_plies = self.declare_variable("wing_num_plies")
+    wing_weight_fudge_factor = self.declare_variable("wing_weight_fudge_factor")
 
 
     carbon_epoxy_thickness = 0.0003
