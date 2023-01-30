@@ -160,4 +160,5 @@ class ParasiteDragModel(csdl.Model):
     self.register_output('fuselage_term', fuselage_term)
     self.register_output('nose_term', nose_term)
     self.register_output('tail_boom_term', tail_boom_term)
+
     
