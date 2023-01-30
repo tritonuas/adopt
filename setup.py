@@ -20,7 +20,6 @@ setup(
     packages=["adopt"],
     install_requires=[
         'csdl',
-        'csdl_om',
         'modopt',
         'openmdao',
         'python_csdl_backend'

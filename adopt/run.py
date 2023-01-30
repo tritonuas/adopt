@@ -106,7 +106,6 @@ fuselage_width = 0.21      # m
 fuselage_height = 0.25     # m
 fuselage_length = 1.1      # m
 
-# commented out because we shouldn't need to worry
 min_velocity_cruise = 15   #m/s
 
 wing_battery_ratio = 0.
@@ -266,21 +265,9 @@ adopt.add_constraint('C_nr', upper=0)
 # adopt.add_constraint('wd_dr', lower=0.1225)
 # adopt.add_constraint('t_roll', upper=2.0)
 
-''' Adding Optimizer to the Problem '''
-# prob.driver = om.ScipyOptimizeDriver()
-# prob.driver.options['optimizer'] = 'SLSQP'
-# prob.driver.options['maxiter'] = 20   # How to set max iterations
-# adopt.nonlinear_solver = om.NonlinearBlockGS()
-# adopt.nonlinear_solver = om.NewtonSolver(solve_subsystems=True)
-
-# prob.driver = om.pyOptSparseDriver()  # Adding a driver to the problem
-# prob.driver.options['optimizer'] = 'SNOPT'  # Picking SNOPT
-# prob.driver.opt_settings['Major feasibility tolerance'] = 1.0e-9
-# prob.driver.opt_settings['Major optimality tolerance'] =2.e-12
-
 ''' Setup and Run Optimization '''
 sim = Simulator(adopt)
-# sim.visualize_implementation()
+# sim.visualize_implementation()        # Can only use this if using old backend.
 sim.run()   # Runs model
 # sim.check_partials(compact_print=True)
 # sim.check_totals(compact_print=True)
