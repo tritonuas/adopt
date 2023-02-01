@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 
 # import optimization models/systems
 from adopt.geometry_model import GeometryModel
-from adopt.gross_weight_coupling_model import GrossWeightCouplingModel
+from adopt.aerodynamics_model import AerodynamicsModel
 from adopt.aerodynamic_outputs_model import AerodynamicOutputsModel
 from adopt.range_model import RangeModel
 from adopt.static_stability_model import StaticStabilityModel
@@ -183,8 +183,8 @@ prob.model.add_subsystem('update_geo_params_comp', update_geo_params_comp, promo
 # prob.model.add_subsystem('velocity_coupling_group', velocity_coupling_group, promotes=['*'])
 
 # Add coupling group for gross weight
-gross_weight_coupling_group = GrossWeightCouplingModel()
-prob.model.add_subsystem('gross_weight_coupling_group', gross_weight_coupling_group, promotes=['*'])
+aerodynamics_model = AerodynamicsModel()
+prob.model.add_subsystem('gross_weight_coupling_group', aerodynamics_model, promotes=['*'])
 
 # Get static stability outputs
 stat_stab_comp = StaticStabilityModel()

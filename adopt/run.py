@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 
 # import optimization models/systems
 from adopt.geometry_model import GeometryModel
-from adopt.gross_weight_coupling_model import GrossWeightCouplingModel
+from adopt.aerodynamics_model import AerodynamicsModel
 from adopt.weights.analytic_weight_model import AnalyticWeightModel
 from adopt.aerodynamic_outputs_model import AerodynamicOutputsModel
 from adopt.range_model import RangeModel
@@ -43,27 +43,30 @@ horizontal_stabilizer_weight = 261.3/1000*g # N
 vertical_stabilizer_weight = 167.4/1000*g # N
 wing_weight = (1410.2+1444.4)/1000*g # N
 fuselage_weight = 980/1000*g # N
+motor_weight = 1*g  # N
 misc_weight = 200/1000*g # N
 landing_gear_weight = 850/1000*g # N
 empty_weight = tail_boom_weight+horizontal_stabilizer_weight+vertical_stabilizer_weight+wing_weight+fuselage_weight+misc_weight+landing_gear_weight  # N
 
 # mission inputs
-payload_weight = (7.3-0.510)*g    # N
-battery_weight_cruise = 436.5*4/1000*g    # N
-# battery_weight_vtol = 60*g     # N
-# vtol_motor_weight = 10 * 25 * g     # N
-cruise_motor_weight = 510/1000*g      # N
+battery_weight = 436.5*4/1000*g + 0.3*g    # N
+payload_weight = 7.3*g-motor_weight-battery_weight    # N
 total_propulsive_efficiency = 0.9
 
 # Initial Guesses for Design Variables
 # wing variables
 wing_mean_aerodynamic_chord = 0.5       # m
 wing_span = 3.65      # m
-wing_span = 3.5      # m
+max_wing_span = 3.65    # m
 wing_taper_ratio = 0.45
 wing_sweep_angle = 0
 wing_dihedral = 0
 wing_thickness = 0.06
+
+# fuselage variables
+fuselage_width = 0.21      # m
+fuselage_height = 0.25     # m
+fuselage_length = 1.1      # m
 
 # tail variables
 horizontal_stabilizer_span = 0.5
@@ -84,10 +87,13 @@ tail_boom_radius = 0.0381
 
 # Centers of gravity (% fuselage length)
 wing_center_of_mass = 0.3
-horizontal_stabilizer_center_of_mass = 0.95
-vertical_stabilizer_center_of_mass = 0.95
-battery_center_of_mass = 0.1
-tail_boom_center_of_mass = 0.8
+fuselage_center_of_mass = fuselage_length*0.5
+# horizontal_stabilizer_center_of_mass = fuselage_length + tail_boom_length # these are prescribed in center of mass model (currently in static stability)
+# vertical_stabilizer_center_of_mass = fuselage_length + tail_boom_length
+# tail_boom_center_of_mass = fuselage_length + tail_boom_length*0.5
+battery_center_of_mass = 0.15
+motor_center_of_mass = -0.02
+payload_center_of_mass = 0.4*fuselage_length
 
 # twist distribution? Don't have any spanwise analysis
 
@@ -101,13 +107,7 @@ min_climb_speed = 1          # m/s
 # cl_max = 1.77
 ultimate_load_factor = 4.
 
-# geometric constraints
-max_wing_span = 3.65    # m
-fuselage_width = 0.21      # m
-fuselage_height = 0.25     # m
-fuselage_length = 2.2      # m
-
-min_velocity_cruise = 15   #m/s
+min_velocity_cruise = 15.   #m/s
 
 wing_battery_ratio = 0.
 
@@ -117,14 +117,10 @@ adopt.create_input('air_viscosity', air_viscosity)
 adopt.create_input('a', a)
 
 adopt.create_input('battery_energy_density', battery_energy_density)
-# adopt.create_input('empty_weight', empty_weight)
 
 adopt.create_input('payload_weight', payload_weight)
-adopt.create_input('battery_weight_cruise', battery_weight_cruise)
-# adopt.create_input('wing_weight', wing_weight)
-# adopt.create_input('battery_weight_vtol', battery_weight_vtol)
-# adopt.create_input('vtol_motor_weight', vtol_motor_weight)
-adopt.create_input('cruise_motor_weight', cruise_motor_weight)
+adopt.create_input('battery_weight', battery_weight)
+adopt.create_input('motor_weight', motor_weight)
 adopt.create_input('total_propulsive_efficiency', total_propulsive_efficiency)
 
 adopt.create_input('wing_span', wing_span)
@@ -153,9 +149,12 @@ adopt.create_input('fuselage_height', fuselage_height)
 adopt.create_input('fuselage_length', fuselage_length)
 
 adopt.create_input('wing_center_of_mass', wing_center_of_mass)
+adopt.create_input('fuselage_center_of_mass', fuselage_center_of_mass)
 # adopt.create_input('horizontal_stabilizer_center_of_mass', horizontal_stabilizer_center_of_mass)
-adopt.create_input('vertical_stabilizer_center_of_mass', vertical_stabilizer_center_of_mass)
+# adopt.create_input('vertical_stabilizer_center_of_mass', vertical_stabilizer_center_of_mass)
 adopt.create_input('battery_center_of_mass', battery_center_of_mass)
+adopt.create_input('motor_center_of_mass', motor_center_of_mass)
+adopt.create_input('payload_center_of_mass', payload_center_of_mass)
 
 adopt.create_input('wing_battery_weight_ratio', wing_battery_ratio)
 
@@ -164,6 +163,8 @@ adopt.create_input('min_climb_speed', min_climb_speed)
 adopt.create_input('min_climb_gradient', min_climb_gradient)
 adopt.create_input('ultimate_load_factor', ultimate_load_factor)
 # adopt.create_input('cl_max', cl_max)
+
+adopt.create_input('velocity_cruise_guess', 20.)
 
 
 ''' Rest of the optimization model/system '''
@@ -179,7 +180,7 @@ analytic_weight_model = AnalyticWeightModel()
 adopt.add(submodel=analytic_weight_model, name='analytic_weight_model')
 
 # Add coupling group for gross weight
-gross_weight_coupling_model = GrossWeightCouplingModel()
+gross_weight_coupling_model = AerodynamicsModel()
 adopt.add(submodel=gross_weight_coupling_model, name='gross_weight_coupling_model')
 
 # Get static stability outputs
@@ -207,16 +208,17 @@ adopt.add_design_variable('horizontal_stabilizer_span')
 adopt.add_design_variable('horizontal_stabilizer_mean_aerodynamic_chord')
 adopt.add_design_variable('vertical_stabilizer_span')
 adopt.add_design_variable('vertical_stabilizer_mean_aerodynamic_chord')
-adopt.add_design_variable('fuselage_length')
-# adopt.add_design_variable('battery_weight_cruise')
+# adopt.add_design_variable('fuselage_length')
+# adopt.add_design_variable('battery_weight')
 # adopt.add_design_variable('wing_battery_weight_ratio')
 adopt.add_design_variable('wing_center_of_mass')
-# adopt.add_design_variable('horizontal_stabilizer_center_of_mass')
-adopt.add_design_variable('vertical_stabilizer_center_of_mass')
+# adopt.add_design_variable('horizontal_stabilizer_center_of_mass')     # tail location is purely function of tail boom length
+# adopt.add_design_variable('vertical_stabilizer_center_of_mass')
 adopt.add_design_variable('battery_center_of_mass')
 # adopt.add_design_variable('tail_boom_center_of_mass')
 adopt.add_design_variable('tail_boom_length')
 # adopt.add_design_variable('tail_boom_radius')
+adopt.add_design_variable('velocity_cruise_guess')      # using SAND to resolve coupling
 
 # # Add the objective to the problem
 # adopt.add_objective('range', scaler=-1)
@@ -231,20 +233,20 @@ adopt.add_constraint('horizontal_stabilizer_aspect_ratio', lower=2.5, upper=5.)
 adopt.add_constraint('vertical_stabilizer_span', lower=0.05, upper=1.)
 adopt.add_constraint('vertical_stabilizer_mean_aerodynamic_chord', lower=0.05, upper=0.5)
 adopt.add_constraint('vertical_stabilizer_aspect_ratio', lower=1., upper=3.)
-adopt.add_constraint('fuselage_length', lower=1.1, upper=3.)
+# adopt.add_constraint('fuselage_length', lower=1.1, upper=3.)
 adopt.add_constraint('tail_boom_length', lower=0.001, upper=1.)
 # adopt.add_constraint('tail_boom_radius', lower=1e-4, upper=1.)
 adopt.add_constraint('velocity_cruise', lower=min_velocity_cruise)
 adopt.add_constraint('velocity_stall', upper=max_velocity_stall)
+adopt.add_constraint('velocity_residual', equals=0.)
 
 adopt.add_constraint('cL', upper=1.25)
 
 # Weights constraints
-# adopt.add_constraint('battery_weight_cruise', lower=0., upper=740*g)
-# adopt.add_constraint('wing_battery_weight_ratio', lower=0.01, upper=0.99)
-adopt.add_constraint('wing_center_of_mass', lower=0.25, upper=0.6)
+# adopt.add_constraint('battery_weight', lower=0., upper=740*g)
+adopt.add_constraint('wing_center_of_mass', lower=0.25, upper=0.8)
 # adopt.add_constraint('horizontal_stabilizer_center_of_mass', lower=0.8, upper=0.95)
-adopt.add_constraint('vertical_stabilizer_center_of_mass', lower=0.5, upper=0.95)
+# adopt.add_constraint('vertical_stabilizer_center_of_mass', lower=0.5, upper=0.95)
 adopt.add_constraint('battery_center_of_mass', lower=0.08, upper=0.95)
 # adopt.add_constraint('dist_between_horizontal_stabilizer_and_fuse', lower=1.5)
 
@@ -304,7 +306,7 @@ print('wing_span', sim['wing_span'])
 print('cL: ', sim['cL'])
 print('fuselage_length', sim['fuselage_length'])
 print('velocity_cruise: ', sim['velocity_cruise'])
-print('battery_weight_cruise: ', sim['battery_weight_cruise'])
+print('battery_weight: ', sim['battery_weight'])
 # print('FFWing: ', sim['FFWing'])
 # print('FFFuse: ', sim['FFFuse'])
 
@@ -352,22 +354,21 @@ print("Vertical tail volume coeff: ", sim['vvol_coeff'])
 print()
 print('Weights')
 print('gross_weight: ', sim['gross_weight']/g, 'kg')
-# print('empty_weight', sim['empty_weight']/g, 'kg')
-# print('wing_weight:', sim['wing_weight']/g, 'kg')
-# print('horizontal_stabilizer_weight:', sim['horizontal_stabilizer_weight']/g, 'kg')
-# print('vertical_stabilizer_weight:', sim['vertical_stabilizer_weight']/g, 'kg')
-# print('fuselage_weight:', sim['fuselage_weight']/g, 'kg')
-# print('tail_boom_weight:', sim['tail_boom_weight']/g, 'kg')
-# # print('motor_weight:', sim['motor_weight']/g, 'kg')
-# print('misc_weight:', sim['misc_weight']/g, 'kg')
+print('wing_weight:', sim['wing_weight']/g, 'kg')
+print('fuselage_weight:', sim['fuselage_weight']/g, 'kg')
+print('tail_boom_weight:', sim['tail_boom_weight']/g, 'kg')
+print('horizontal_stabilizer_weight:', sim['horizontal_stabilizer_weight']/g, 'kg')
+print('vertical_stabilizer_weight:', sim['vertical_stabilizer_weight']/g, 'kg')
+print('battery_weight:', sim['battery_weight']/g, 'kg')
+print('motor_weight:', sim['motor_weight']/g, 'kg')
+print('payload_weight:', sim['payload_weight']/g, 'kg')
+
 
 print()
-print('Total length', sim['fuselage_length']*sim['wing_center_of_mass']+sim['tail_boom_length'])
+print('Total length', sim['fuselage_length']+sim['tail_boom_length'])
 print("Total CG location: ", sim['center_of_mass'])
 print('Fuselage length:', sim['fuselage_length'])
 print("Wing CG location: ", sim['wing_center_of_mass']*sim['fuselage_length'])
-print("Vtail CG location: ", sim['vertical_stabilizer_center_of_mass']*sim['tail_boom_length'] + sim['wing_center_of_mass']*sim['fuselage_length'])
-print("Ballast CG location: ", sim['battery_center_of_mass']*sim['fuselage_length'])
 print("Tail boom length: ", sim['tail_boom_length'])
 
 print("Neutral point: ", sim['np'])
@@ -393,18 +394,7 @@ print("zeta_dr: ", sim['z_dr']**(1/2))
 print("tau_roll: ", sim['t_roll'])
 
 print()
-print('wing_cl_dist', wing_cl_dist)
-
-
-# testing
-print('air_density',sim['air_density'])
-print('velocity_cruise', sim['velocity_cruise'])
-print('air_viscosity',sim['air_viscosity'])
-print('wing_mean_aerodynamic_chord',sim['wing_mean_aerodynamic_chord'])
-print('nose_length',sim['nose_length'])
-print('horizontal_stabilizer_mean_aerodynamic_chord',sim['horizontal_stabilizer_mean_aerodynamic_chord'])
-print('vertical_stabilizer_mean_aerodynamic_chord',sim['vertical_stabilizer_mean_aerodynamic_chord'])
-
+# print('wing_cl_dist', wing_cl_dist)
 
 
 # from adopt.csv import reader

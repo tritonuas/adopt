@@ -18,6 +18,8 @@ class DragPolarModel(csdl.Model):
     cD0 = self.declare_variable('cD0', val=0.35)
     e = self.declare_variable('oswald_efficiency_factor', val=0.730947)
 
+    velocity_cruise_guess = self.declare_variable('velocity_cruise_guess')
+
     k = 1/(np.pi*e*wing_aspect_ratio)
 
     cL = (cD0/k)**(1/2)
@@ -25,6 +27,9 @@ class DragPolarModel(csdl.Model):
     # L = gross_weight = 1/2*air_density*velocity_cruise**2*wing_area*cL
     velocity_cruise = (gross_weight/(1/2*air_density*wing_area*cL))**(1/2)
     lift = 1/2*air_density*velocity_cruise**2*wing_area*cL
+
+    velocity_residual = velocity_cruise - velocity_cruise_guess
+    self.register_output('velocity_residual', velocity_residual)
 
     self.register_output('cL', cL)
     self.register_output('velocity_cruise', velocity_cruise)

@@ -50,6 +50,7 @@ def FF_wing(x_over_c, t_over_c, M, wing_sweep_angle):
 
 def FF_fuse(f):
     FF = 1 + 60/f**3 + f/400
+    # FF = 1 + 0.001/f
     return FF
 
 
@@ -75,7 +76,7 @@ class ParasiteDragModel(csdl.Model):
     a = self.declare_variable('a', val=343)
 
     # velocity_cruise = self.declare_variable('velocity_cruise', val=20.)
-    velocity_cruise = self.create_input('velocity_cruise_guess', val=20.)
+    velocity_cruise = self.declare_variable('velocity_cruise_guess', val=20.)
 
     wing_area = self.declare_variable('wing_area', val=11.)
     wing_mean_aerodynamic_chord = self.declare_variable('wing_mean_aerodynamic_chord', val=1.)
@@ -94,8 +95,6 @@ class ParasiteDragModel(csdl.Model):
     tail_boom_length = self.declare_variable('tail_boom_length', val=2.)
 
     wing_sweep_angle = self.declare_variable('wing_sweep_angle', val=0.)
-
-    M = velocity_cruise/a
 
     cf_wing = calc_cf(air_density, air_viscosity, wing_mean_aerodynamic_chord, velocity_cruise, a)
     cf_fuse = calc_cf(air_density, air_viscosity, fuselage_length, velocity_cruise, a)

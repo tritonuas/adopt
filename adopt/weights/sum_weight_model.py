@@ -13,12 +13,13 @@ class SumWeightModel(csdl.Model):
         vertical_stabilizer_weight = self.declare_variable('vertical_stabilizer_weight', val=1000)
         fuselage_weight = self.declare_variable('fuselage_weight', val=1000)
         tail_boom_weight = self.declare_variable('tail_boom_weight', val=1000)
-        battery = self.declare_variable('battery', val=22.2)
+        battery_weight = self.declare_variable('battery_weight', val=22.2)
         payload_weight = self.declare_variable('payload_weight', val=63)
-        fudge_factor = self.declare_variable('fudge_factor', val=1)
+        motor_weight = self.declare_variable('motor_weight', val=9.81)
+        gross_weight_fudge_factor = self.declare_variable('gross_weight_fudge_factor', val=1.)
 
-        gross_weight = wing_weight + horizontal_stabilizer_weight + vertical_stabilizer_weight + fuselage_weight + tail_boom_weight + battery + payload_weight
-        gross_weight = gross_weight * fudge_factor
+        gross_weight = wing_weight + fuselage_weight + horizontal_stabilizer_weight + vertical_stabilizer_weight + tail_boom_weight + battery_weight + payload_weight + motor_weight
+        gross_weight = gross_weight * gross_weight_fudge_factor
 
         self.register_output('gross_weight', gross_weight)
 

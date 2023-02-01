@@ -7,11 +7,9 @@ class StaticStabilityModel(csdl.Model):
         pass
 
     def define(self):
-        payload_weight = self.declare_variable('payload_weight', val=400*9.81)
-        battery_weight = self.declare_variable('battery_weight_cruise', val=300*9.81)
-        # battery_weight_vtol = self.declare_variable('battery_weight_vtol', val=500*9.81)
-        # vtol_motor_weight = self.declare_variable('vtol_motor_weight', val=25*10*9.81)
-        cruise_motor_weight = self.declare_variable('cruise_motor_weight', val=71*9.81)
+        payload_weight = self.declare_variable('payload_weight', val=6.3*9.81)
+        battery_weight = self.declare_variable('battery_weight', val=22.2)
+        motor_weight = self.declare_variable('motor_weight', val=1*9.81)
 
         wing_battery_weight_ratio = self.declare_variable('wing_battery_weight_ratio', val = 0.)
         wing_weight = self.declare_variable('wing_weight')
@@ -19,34 +17,27 @@ class StaticStabilityModel(csdl.Model):
         vertical_stabilizer_weight = self.declare_variable('vertical_stabilizer_weight')
         fuselage_weight = self.declare_variable('fuselage_weight')
         tail_boom_weight = self.declare_variable('tail_boom_weight')
-        misc_weight = self.declare_variable('misc_weight')
+        gross_weight = self.declare_variable('gross_weight')
 
-        wing_center_of_mass = self.declare_variable('wing_center_of_mass', val = 0.45)
-        vertical_stabilizer_center_of_mass = self.declare_variable('vertical_stabilizer_center_of_mass', val = 0.9)
-        fuselage_len = self.declare_variable('fuselage_length', val = 7)
-        tail_boom_length = self.declare_variable('tail_boom_length', val = 4)
-        battery_center_of_mass = self.declare_variable('battery_center_of_mass', val = 0.12)
+        wing_center_of_mass = self.declare_variable('wing_center_of_mass', val = 0.45*1.1)
+        # vertical_stabilizer_center_of_mass = self.declare_variable('vertical_stabilizer_center_of_mass', val = 1.1+1.)
+        # horizontal_stabilizer_center_of_mass = self.declare_variable('horizontal_stabilizer_center_of_mass', val = 1.1+1.)
+        fuselage_center_of_mass = self.declare_variable('fuselage_center_of_mass', 0.25*1.1)
+        # tail_boom_center_of_mass = self.declare_variable('tail_boom_center_of_mass', val=1.1+0.5)
+        battery_center_of_mass = self.declare_variable('battery_center_of_mass', val = 0.15)
+        motor_center_of_mass = self.declare_variable('motor_center_of_mass', val=-0.02)
+        payload_center_of_mass = self.declare_variable('payload_center_of_mass', val=0.5)
 
-        fuselage_center_of_mass = 0.5 * fuselage_len
-        back_prop_center_of_mass = fuselage_len + 0.25
+        fuselage_length = self.declare_variable('fuselage_length', val=1.1)
+        tail_boom_length = self.declare_variable('tail_boom_length', val=1.)
+        tail_boom_center_of_mass = fuselage_length + 0.5*tail_boom_length
+        horizontal_stabilizer_center_of_mass = fuselage_length + tail_boom_length*0.9
+        vertical_stabilizer_center_of_mass = fuselage_length + tail_boom_length*0.9
 
-        wing_center_of_mass = wing_center_of_mass * fuselage_len
-        horizontal_stabilizer_center_of_mass = wing_center_of_mass + tail_boom_length
-        vertical_stabilizer_center_of_mass = vertical_stabilizer_center_of_mass * tail_boom_length + wing_center_of_mass
-        battery_center_of_mass = battery_center_of_mass * fuselage_len
+        center_of_mass = (wing_weight*wing_center_of_mass + fuselage_weight*fuselage_center_of_mass + tail_boom_weight*tail_boom_center_of_mass + \
+            horitontal_stabilizer_weight*horizontal_stabilizer_center_of_mass + vertical_stabilizer_weight*vertical_stabilizer_center_of_mass + \
+            battery_weight*battery_center_of_mass + motor_weight*motor_center_of_mass + payload_weight*payload_center_of_mass)/gross_weight
 
-        tail_boom_center_of_mass = wing_center_of_mass + 0.5 * tail_boom_length
-
-        w1 = wing_weight + battery_weight
-        w2 = horitontal_stabilizer_weight
-        w3 = vertical_stabilizer_weight
-        w4 = fuselage_weight + payload_weight
-        w5 = cruise_motor_weight
-        w6 = (1 - wing_battery_weight_ratio) * battery_weight + misc_weight
-        w7 = tail_boom_weight
-        wx = w1*wing_center_of_mass + w2*horizontal_stabilizer_center_of_mass + w3*vertical_stabilizer_center_of_mass + w4*fuselage_center_of_mass + \
-                w5*back_prop_center_of_mass + w6*battery_center_of_mass + w7*tail_boom_center_of_mass
-        center_of_mass = wx / (w1+w2+w3+w4+w5+w6+w7)
 
         wing_aspect_ratio = self.declare_variable('wing_aspect_ratio')
         W_mean_aerodynamic_chord = self.declare_variable('wing_mean_aerodynamic_chord')
@@ -118,5 +109,3 @@ class StaticStabilityModel(csdl.Model):
         self.register_output('C_nbeta', C_nbeta)
         self.register_output('C_ybeta', C_ybeta)
         self.register_output('C_nr', C_nr)
-
-        self.register_output('dist_between_horizontal_stabilizer_and_fuse', horizontal_stabilizer_center_of_mass-fuselage_len)
